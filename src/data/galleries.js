@@ -20,6 +20,13 @@ const GALLERIES = [
       description: "Featuring Leonardo da Vinci's masterpiece in a dedicated viewing room.",
       image: '/images/realmonalisa.jpg',
     },
+    {
+      _id: 'mona-lisa-gallery',
+      name: 'Mona Lisa Gallery',
+      position: 'Gallery M',
+      description: "Featuring Leonardo da Vinci's masterpiece in a dedicated viewing room.",
+      image: '/images/realmonalisa.jpg',
+    },
   ];
   
   
