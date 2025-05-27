@@ -1,0 +1,39 @@
+{
+  "name": "galleryx",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongodb": "^6.3.0",
+    "next": "15.1.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.8",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17"
+  },
+  "description": "Virtual museum web application with Next.js, Tailwind CSS, and MongoDB",
+  "main": "index.js",
+  "keywords": [
+    "museum",
+    "virtual",
+    "art",
+    "gallery",
+    "nextjs",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
