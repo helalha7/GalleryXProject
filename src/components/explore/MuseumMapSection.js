@@ -5,13 +5,13 @@ import SectionHeader from '../shared/SectionHeader';
 
 export default function MuseumMapSection({ hasTicket, onGallerySelect }) {
   return (
-    <div className="bg-gradient-to-b from-gray-700/30 to-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-600/30 p-8 shadow-2xl">
-      <div className="mb-6 text-center">
-        <SectionHeader title="Interactive Floor Plan" noDivider />
-        <p className="text-gray-400">Click on any gallery to begin your virtual tour</p>
-      </div>
-
+    <>
+      <SectionHeader title="Museum Floor Plan" />
+      <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed text-center mb-12">
+        Navigate through our virtual galleries and discover masterpieces from around the world
+      </p>
       <FixedMuseumMap onGallerySelect={onGallerySelect} />
-    </div>
+    </>
+
   );
 }

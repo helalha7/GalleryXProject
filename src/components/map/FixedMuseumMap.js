@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import GalleryCard from './GalleryCard';
 import GALLERIES from '@/data/galleries';
+import GradientCard from '../shared/GradientCard';
 
 export default function FixedMuseumMap({ onGallerySelect }) {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function FixedMuseumMap({ onGallerySelect }) {
       onGallerySelect(gallery);
     } else {
       switch (gallery._id) {
-        case 'gallery-a':
+        case 'egyptian-gallery':
           router.push('/explore/egyptian-gallery');
           break;
         case 'roman-gallery':
@@ -28,17 +29,11 @@ export default function FixedMuseumMap({ onGallerySelect }) {
   };
 
   return (
-    <section className="p-8 bg-gray-900 rounded-2xl shadow-xl border border-gray-700 max-w-4xl mx-auto select-none">
-      <header className="mb-8 text-center">
-        <h2 className="text-3xl font-display font-extrabold text-white tracking-tight mb-1">
-          GalleryX - Museum Map
-        </h2>
-        <p className="text-gray-400 text-sm sm:text-base">
-          Click on a gallery to explore
-        </p>
-      </header>
-
-      <div className="grid gap-8 max-w-3xl mx-auto grid-cols-1 sm:grid-cols-2">
+    <GradientCard
+      hover={false}
+      className="p-8 sm:p-12 lg:p-16 max-w-6xl mx-auto mt-12"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {GALLERIES.map((gallery) => (
           <GalleryCard
             key={gallery._id}
@@ -47,6 +42,7 @@ export default function FixedMuseumMap({ onGallerySelect }) {
           />
         ))}
       </div>
-    </section>
+    </GradientCard>
   );
+  
 }

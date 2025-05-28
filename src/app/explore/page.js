@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../../components/shared/Header';
 import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
-import SectionHeader from '@/components/shared/SectionHeader';
 import GALLERIES from '@/data/galleries';
 import GalleryListSection from '@/components/explore/GalleryListSection';
 import MuseumMapSection from '@/components/explore/MuseumMapSection';
@@ -76,13 +75,7 @@ export default function ExplorePage() {
       <AnimatedBackdrop />
       <main className="flex-1 p-6 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <SectionHeader title="Museum Floor Plan" />
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed text-center mb-12">
-            Navigate through our virtual galleries and discover masterpieces from around the world
-          </p>
-
           {!hasTicket && <TicketBanner />}
-
           <MuseumMapSection
             hasTicket={hasTicket}
             onGallerySelect={handleGallerySelect}

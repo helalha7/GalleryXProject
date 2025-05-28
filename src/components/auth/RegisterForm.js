@@ -29,7 +29,7 @@ export default function RegisterForm() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -37,7 +37,7 @@ export default function RegisterForm() {
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
+      if (!response.ok) {
         throw new Error(data.error || 'Registration failed');
       }
 
