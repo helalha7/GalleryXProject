@@ -4,7 +4,7 @@ import {
     getAllUsersService,
     deleteUserByIdService,
     updateUserByIdService,
-} from '@/services/userService';
+} from '@/core/services/userService';
 
 // POST /api/users
 export async function registerUserController(req) {

@@ -1,7 +1,7 @@
 import {
     registerUserController,
     getAllUsersController
-  } from '@/controllers/userController';
+  } from '@/core/controllers/userController';
   
   export async function POST(req) {
     return await registerUserController(req);

@@ -1,5 +1,5 @@
 import { connectToDatabase } from '@/lib/mongoose';
-import User from '@/models/userModel';
+import User from '@/core/models/userModel';
 
 // Create a new user
 export async function createUser(userData) {

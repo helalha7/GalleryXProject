@@ -4,7 +4,7 @@ import {
     getAllUsers,
     deleteUserById,
     updateUserById,
-} from '@/repositories/userRepository';
+} from '@/core/repositories/userRepository';
 
 
 

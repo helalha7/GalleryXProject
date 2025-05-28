@@ -1,4 +1,4 @@
-import { getUserByUsername, createUser } from '@/repositories/userRepository';
+import { getUserByUsername, createUser } from '@/core/repositories/userRepository';
 
 export async function registerService(userData) {
     try {

@@ -1,4 +1,4 @@
-import { registerService, loginService } from '@/services/authService';
+import { registerService, loginService } from '@/core/services/authService';
 
 export async function registerController(req) {
   try {

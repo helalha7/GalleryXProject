@@ -1,4 +1,4 @@
-import { deleteUserController, updateUserController } from '@/controllers/userController';
+import { deleteUserController, updateUserController } from '@/core/controllers/userController';
 
 export async function DELETE(req, context) {
     return await deleteUserController(req, context);
