@@ -1,11 +1,9 @@
+'use client';
 import Header from '../../components/shared/Header';
 import RegisterForm from '../../components/auth/RegisterForm';
 import AuthContainer from '../../components/auth/AuthContainer';
 import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
-export const metadata = {
-  title: 'Create Account - GalleryX',
-  description: 'Create a new account to access virtual tours and exhibits on GalleryX',
-};
+
 
 export default function RegisterPage() {
   return (

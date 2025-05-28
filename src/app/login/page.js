@@ -1,11 +1,9 @@
+'use client';
 import Header from '../../components/shared/Header';
 import LoginForm from '../../components/auth/LoginForm';
 import AuthContainer from '../../components/auth/AuthContainer';
 import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
-export const metadata = {
-  title: 'Login - GalleryX',
-  description: 'Log in to your GalleryX account to access virtual tours and exhibits',
-};
+
 
 export default function LoginPage() {
   return (
