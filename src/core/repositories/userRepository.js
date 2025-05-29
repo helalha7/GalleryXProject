@@ -3,74 +3,40 @@ import User from '@/core/models/userModel';
 
 // Create a new user
 export async function createUser(userData) {
-  try {
-    await connectToDatabase();
+  await connectToDatabase();
 
-    const newUser = new User({
-      fullName: userData.fullName,
-      email: userData.email,
-      username: userData.username,
-      password: `hashed_${userData.password}`, // For demo only
-      role: userData.role || 'visitor',
-      hasPurchasedTicket: false,
-      createdAt: new Date(),
-    });
+  const newUser = new User({
+    fullName: userData.fullName,
+    email: userData.email,
+    username: userData.username,
+    password: `hashed_${userData.password}`, // For demo only
+    role: userData.role || 'visitor',
+    createdAt: new Date(),
+  });
 
-    return await newUser.save();
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw new Error('Failed to create user');
-  }
+  return await newUser.save();
 }
 
 // Get user by username
 export async function getUserByUsername(username) {
-  try {
-    await connectToDatabase();
-    return await User.findOne({ username });
-  } catch (error) {
-    console.error('Error fetching user by username:', error);
-    throw new Error('Failed to fetch user by username');
-  }
+  await connectToDatabase();
+  return await User.findOne({ username });
 }
 
 // Get all users
 export async function getAllUsers() {
-  try {
-    await connectToDatabase();
-    return await User.find();
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users');
-  }
+  await connectToDatabase();
+  return await User.find();
 }
 
 // Delete user by ID
 export async function deleteUserById(userId) {
-  try {
-    await connectToDatabase();
-    return await User.findByIdAndDelete(userId);
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    throw new Error('Failed to delete user');
-  }
-
-  
+  await connectToDatabase();
+  return await User.findByIdAndDelete(userId);
 }
 
 // Update user by ID
 export async function updateUserById(userId, updateData) {
-    try {
-      await connectToDatabase();
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { $set: updateData },
-        { new: true } // return updated doc
-      );
-      return updatedUser;
-    } catch (error) {
-      console.error('Error updating user:', error);
-      throw new Error('Failed to update user');
-    }
+  await connectToDatabase();
+  return await User.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
 }
-  

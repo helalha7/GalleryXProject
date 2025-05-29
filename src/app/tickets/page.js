@@ -1,47 +1,68 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '../../components/shared/Header';
-import TicketPurchase from '../../components/ticket/TicketPurchase';
+import Header from '@/components/shared/Header';
+import TicketForm from '@/components/tickets/TicketForm';
+import TicketSuccess from '@/components/tickets/TicketSuccess';
+import {
+  getUserFromSession,
+  saveUserSession,
+  getTokenFromSession,
+} from '@/utils/sessionStorageHandler';
+import { fetchUserTicket } from '@/lib/api/ticket'; // updated path
 
-export default function TicketsPage() {
+export default function TicketPage() {
   const [user, setUser] = useState(null);
+  const [ticket, setTicket] = useState(null);
+  const [token, setToken] = useState(null);
   const router = useRouter();
-  
-  useEffect(() => {
-    // Check if user is logged in
-    const storedUser = sessionStorage.getItem('user');
-    if (!storedUser) {
-      router.push('/login?redirect=/tickets');
-      return;
-    }
 
-    setUser(JSON.parse(storedUser));
+  useEffect(() => {
+    const init = async () => {
+      const storedUser = getUserFromSession();
+      const storedToken = getTokenFromSession();
+
+      if (!storedUser || !storedToken) {
+        router.push('/login?redirect=/tickets');
+        return;
+      }
+
+      setUser(storedUser);
+      setToken(storedToken);
+
+      try {
+        const ticket = await fetchUserTicket(storedToken);
+        const validUntil = new Date(ticket.validUntil);
+        const now = new Date();
+
+        if (validUntil > now) {
+          setTicket(ticket);
+        }
+      } catch (err) {
+        console.warn('No valid ticket found:', err.message);
+      }
+    };
+
+    init();
   }, [router]);
 
-  // Handle ticket purchase completion
-  const handlePurchaseComplete = () => {
-    router.push('/explore');
+  const handlePurchase = (newTicket) => {
+    const updatedUser = { ...user, ticket: newTicket.id };
+    setUser(updatedUser);
+    setTicket(newTicket);
+    saveUserSession(updatedUser, token);
   };
-  
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 flex items-center justify-center p-6">
-          <p>Loading...</p>
-        </main>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
       <Header user={user} />
-      
-      <main className="flex-1 flex items-center justify-center p-6 bg-gray-50 dark:bg-white">
-        <TicketPurchase onComplete={handlePurchaseComplete} />
+      <main className="flex-1 flex justify-center items-center p-6">
+        {!ticket ? (
+          <TicketForm onSuccess={handlePurchase} />
+        ) : (
+          <TicketSuccess ticket={ticket} />
+        )}
       </main>
     </div>
   );

@@ -1,32 +1,76 @@
 import { registerService, loginService } from '@/core/services/authService';
+import { generateToken } from '@/lib/middleware/jwt';
 
+// ✅ Register Controller
 export async function registerController(req) {
   try {
     const userData = await req.json();
 
     const validRoles = ['visitor', 'admin'];
     if (userData.role && !validRoles.includes(userData.role)) {
-      return new Response(JSON.stringify({ error: 'Invalid role. Must be visitor or admin' }), { status: 400 });
+      return new Response(
+        JSON.stringify({ success: false, message: 'Invalid role. Allowed: visitor or admin.' }),
+        { status: 400 }
+      );
     }
 
-    const user = await registerService(userData);
-    return new Response(JSON.stringify(user), { status: 201 });
+    const result = await registerService(userData);
+
+    if (!result.success && result.reason === 'username_exists') {
+      return new Response(
+        JSON.stringify({ success: false, message: 'Username already exists.' }),
+        { status: 400 }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ success: true, data: result.user }),
+      { status: 201 }
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+    console.error('Register Error:', error.message);
+    return new Response(
+      JSON.stringify({ success: false, message: 'Registration failed.' }),
+      { status: 500 }
+    );
   }
 }
 
+// ✅ Login Controller
 export async function loginController(req) {
   try {
     const { username, password } = await req.json();
 
     if (!username || !password) {
-      return new Response(JSON.stringify({ error: 'Username and password are required' }), { status: 400 });
+      return new Response(
+        JSON.stringify({ success: false, message: 'Username and password are required.' }),
+        { status: 400 }
+      );
     }
 
     const user = await loginService(username, password);
-    return new Response(JSON.stringify({ success: true, user }), { status: 200 });
+
+    if (!user) {
+      return new Response(
+        JSON.stringify({ success: false, message: 'Invalid username or password.' }),
+        { status: 401 }
+      );
+    }
+
+    const token = generateToken(user);
+
+    return new Response(
+      JSON.stringify({ success: true, data: { user, token } }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 401 });
+    console.error('Login Error:', error.message);
+    return new Response(
+      JSON.stringify({ success: false, message: 'Internal server error.' }),
+      { status: 500 }
+    );
   }
 }

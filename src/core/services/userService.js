@@ -1,57 +1,27 @@
 import {
-    createUser,
     getUserByUsername,
     getAllUsers,
     deleteUserById,
     updateUserById,
-} from '@/core/repositories/userRepository';
-
-
-
-export async function registerUserService(userData) {
-    try {
-        return await createUser(userData);
-    } catch (error) {
-        console.error('Service Error - registerUserService:', error);
-        throw new Error('Failed to register user');
-    }
-}
-
-
-export async function getUserByUsernameService(username) {
-    try {
-        return await getUserByUsername(username);
-    } catch (error) {
-        console.error('Service Error - getUserByUsernameService:', error);
-        throw new Error('Failed to get user by username');
-    }
-}
-
-export async function getAllUsersService() {
-    try {
-        return await getAllUsers();
-    } catch (error) {
-        console.error('Service Error - getAllUsersService:', error);
-        throw new Error('Failed to fetch all users');
-    }
-}
-
-export async function deleteUserByIdService(userId) {
-    try {
-        return await deleteUserById(userId);
-    } catch (error) {
-        console.error('Service Error - deleteUserByIdService:', error);
-        throw new Error('Failed to delete user');
-    }
-}
-
-
-export async function updateUserByIdService(userId, updateData) {
-    try {
-        return await updateUserById(userId, updateData);
-    } catch (error) {
-        console.error('Service Error - updateUserByIdService:', error);
-        throw new Error('Failed to update user');
-    }
-}
-
+  } from '@/core/repositories/userRepository';
+  
+  // ✅ Get one user by username
+  export async function getUserByUsernameService(username) {
+    return await getUserByUsername(username); // return null if not found
+  }
+  
+  // ✅ Get all users
+  export async function getAllUsersService() {
+    return await getAllUsers(); // return []
+  }
+  
+  // ✅ Delete user by ID
+  export async function deleteUserByIdService(userId) {
+    return await deleteUserById(userId); // return deleted user or null
+  }
+  
+  // ✅ Update user by ID
+  export async function updateUserByIdService(userId, updateData) {
+    return await updateUserById(userId, updateData); // return updated user or null
+  }
+  

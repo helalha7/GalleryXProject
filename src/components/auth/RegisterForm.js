@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import TextInput from '@/components/auth/TextInput';
+import SubmitButton from '@/components/auth/SubmitButton';
+import { register } from '@/lib/api/auth'; // ✅ import your clean API function
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -29,23 +32,9 @@ export default function RegisterForm() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
-      }
-
+      await register(formData);
       setSuccess(true);
-
-      setTimeout(() => {
-        router.push('/login?registered=true');
-      }, 2000);
+      router.push('/login?registered=true');
     } catch (err) {
       setError(err.message || 'Registration failed');
     } finally {
@@ -68,73 +57,41 @@ export default function RegisterForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="fullName" className="block mb-2 font-medium text-gray-300">
-            Full Name
-          </label>
-          <input
-            id="fullName"
-            name="fullName"
-            type="text"
-            className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.fullName}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <TextInput
+          id="fullName"
+          label="Full Name"
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
+        />
 
-        <div>
-          <label htmlFor="email" className="block mb-2 font-medium text-gray-300">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <TextInput
+          id="email"
+          label="Email"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+        />
 
-        <div>
-          <label htmlFor="username" className="block mb-2 font-medium text-gray-300">
-            Username
-          </label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <TextInput
+          id="username"
+          label="Username"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+        />
 
-        <div>
-          <label htmlFor="password" className="block mb-2 font-medium text-gray-300">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <TextInput
+          id="password"
+          label="Password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+        />
 
-        <button
-          type="submit"
-          className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-400 text-white font-semibold hover:from-blue-700 hover:to-cyan-500 transition disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? 'Registering...' : 'Register'}
-        </button>
+        <SubmitButton loading={loading}>Register</SubmitButton>
       </form>
 
       <div className="mt-6 text-center text-sm text-gray-400">

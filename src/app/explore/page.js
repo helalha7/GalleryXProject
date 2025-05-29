@@ -10,6 +10,7 @@ import MuseumMapSection from '@/components/explore/MuseumMapSection';
 import CallToAction from '@/components/explore/CallToAction';
 import TicketBanner from '@/components/explore/TicketBanner';
 import TicketPrompt from '@/components/explore/TicketPrompt';
+import { getUserFromSession } from '@/utils/sessionStorageHandler';
 
 export default function ExplorePage() {
   const [user, setUser] = useState(null);
@@ -20,25 +21,23 @@ export default function ExplorePage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const storedUser = sessionStorage.getItem('user');
+      const storedUser = getUserFromSession();
       if (!storedUser) {
         router.push('/login?redirect=/explore');
         return;
       }
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        setHasTicket(parsedUser.role === 'admin' || parsedUser.hasPurchasedTicket === true);
-      } catch (e) {
-        console.error('Error parsing user from session:', e);
-      }
+
+      setUser(storedUser);
+      setHasTicket(storedUser.role === 'admin' || !!storedUser.ticket);
       setLoading(false);
     };
+
     checkAuth();
   }, [router]);
 
   const handleGallerySelect = (gallery) => {
     if (!hasTicket) return setTicketRequired(true);
+
     const galleryId = gallery?._id || 'unknown-gallery';
     if (galleryId === 'gallery-a') router.push('/explore/egyptian-gallery');
     else if (galleryId === 'roman-gallery') router.push('/explore/roman-gallery');
@@ -80,13 +79,11 @@ export default function ExplorePage() {
             hasTicket={hasTicket}
             onGallerySelect={handleGallerySelect}
           />
-
           <GalleryListSection
             galleries={GALLERIES}
             hasTicket={hasTicket}
             onGallerySelect={handleGallerySelect}
           />
-
           <CallToAction hasTicket={hasTicket} />
         </div>
       </main>

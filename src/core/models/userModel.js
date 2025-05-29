@@ -7,12 +7,11 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: {
     type: String,
-    enum: ['visitor', 'admin'], // ✅ only these allowed
+    enum: ['visitor', 'admin'],
     default: 'visitor',
   },
-  hasPurchasedTicket: { type: Boolean, default: false },
+  ticket: { type: mongoose.Schema.Types.ObjectId, ref: 'Ticket' },
   createdAt: { type: Date, default: Date.now }
 });
-
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

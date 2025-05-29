@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import TextInput from '@/components/auth/TextInput';
+import SubmitButton from '@/components/auth/SubmitButton';
+import { login } from '@/lib/api/auth';
 
 export default function LoginForm() {
   const [username, setUsername] = useState('');
@@ -15,15 +18,9 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const isRegistered = searchParams.get('registered');
-    if (isRegistered === 'true') {
-      setRegistered(true);
-    }
-
+    if (searchParams.get('registered') === 'true') setRegistered(true);
     const redirect = searchParams.get('redirect');
-    if (redirect) {
-      sessionStorage.setItem('loginRedirect', redirect);
-    }
+    if (redirect) sessionStorage.setItem('loginRedirect', redirect);
   }, [searchParams]);
 
   const handleSubmit = async (e) => {
@@ -32,24 +29,12 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Login failed');
-      }
-
-      sessionStorage.setItem('user', JSON.stringify(data.user));
+      const user = await login({ username, password });
 
       const redirectUrl = sessionStorage.getItem('loginRedirect');
       sessionStorage.removeItem('loginRedirect');
 
-      if (data.user.role === 'admin') {
+      if (user.role === 'admin') {
         router.push('/admin');
       } else if (redirectUrl) {
         router.push(redirectUrl);
@@ -78,41 +63,20 @@ export default function LoginForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="username" className="block mb-2 font-medium text-gray-300">
-            Username
-          </label>
-          <input
-            id="username"
-            type="text"
-            className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className="block mb-2 font-medium text-gray-300">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-400 text-white font-semibold hover:from-blue-700 hover:to-cyan-500 transition disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
+        <TextInput
+          id="username"
+          label="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <TextInput
+          id="password"
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <SubmitButton loading={loading}>Login</SubmitButton>
       </form>
 
       <div className="mt-6 text-center text-sm text-gray-400">
