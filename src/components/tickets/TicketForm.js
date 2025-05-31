@@ -1,8 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { purchaseTicket } from '@/lib/api/ticket'; // updated path
+import { purchaseTicket } from '@/lib/api/ticket';
 import { getTokenFromSession } from '@/utils/sessionStorageHandler';
+import StyledTextInput from '@/components/shared/StyledTextInput';
+import GradientCard from '@/components/shared/GradientCard';
+import GradientButton from '../shared/buttons/GradientButton';
+import SectionHeader from '../shared/SectionHeader';
 
 export default function TicketForm({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -36,21 +40,49 @@ export default function TicketForm({ onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg p-6 shadow-lg max-w-md w-full">
-      <h2 className="text-2xl font-bold mb-4">Purchase Ticket - $15.00</h2>
+    <GradientCard hover={false} className="p-6 md:p-8 max-w-md w-full mx-auto mt-8">
+      <form onSubmit={handleSubmit} className="text-white space-y-4">
+        <SectionHeader title = {'Purchase Ticket - $15.00'}/>
+        {error && (
+          <div className="bg-red-100 text-red-600 p-2 rounded mb-4">
+            {error}
+          </div>
+        )}
 
-      {error && <div className="bg-red-100 text-red-600 p-2 rounded mb-4">{error}</div>}
+        <StyledTextInput
+          name="nameOnCard"
+          placeholder="Name on Card"
+          value={formData.nameOnCard}
+          onChange={handleChange}
+        />
 
-      <input name="nameOnCard" placeholder="Name on Card" className="input-field mb-3" required onChange={handleChange} />
-      <input name="cardNumber" placeholder="Card Number" className="input-field mb-3" required onChange={handleChange} />
-      <div className="grid grid-cols-2 gap-4 mb-3">
-        <input name="expiryDate" placeholder="MM/YY" className="input-field" required onChange={handleChange} />
-        <input name="cvv" placeholder="CVV" className="input-field" required onChange={handleChange} />
-      </div>
+        <StyledTextInput
+          name="cardNumber"
+          placeholder="Card Number"
+          value={formData.cardNumber}
+          onChange={handleChange}
+        />
 
-      <button type="submit" disabled={loading} className="btn-primary w-full py-3">
-        {loading ? 'Processing...' : 'Complete Purchase'}
-      </button>
-    </form>
+        <div className="grid grid-cols-2 gap-4">
+          <StyledTextInput
+            name="expiryDate"
+            placeholder="MM/YY"
+            value={formData.expiryDate}
+            onChange={handleChange}
+          />
+          <StyledTextInput
+            name="cvv"
+            placeholder="CVV"
+            value={formData.cvv}
+            onChange={handleChange}
+          />
+        </div>
+
+        <GradientButton type="submit" disabled={loading}>
+          {loading ? 'Processing...' : 'Complete Purchase'}
+        </GradientButton>
+      </form>
+    </GradientCard>
+
   );
 }

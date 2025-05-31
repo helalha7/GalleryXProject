@@ -1,4 +1,3 @@
-// src/components/explore/TicketPrompt.tsx
 'use client';
 
 import Link from 'next/link';
@@ -6,7 +5,7 @@ import AnimatedBackdrop from '../shared/AnimatedBackdrop';
 
 export default function TicketPrompt({ onBack }) {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[#f9fafb] dark:bg-gray-900 text-[#111827] dark:text-white relative overflow-hidden transition-colors duration-300">
       <div className="relative z-50">
         {/* Header is injected from parent */}
       </div>
@@ -14,7 +13,10 @@ export default function TicketPrompt({ onBack }) {
       <AnimatedBackdrop />
 
       <main className="flex-1 p-6 flex items-center justify-center relative z-10">
-        <div className="text-center max-w-lg p-10 bg-gradient-to-b from-gray-700/50 to-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-600/30">
+        <div className="text-center max-w-lg p-10 rounded-2xl backdrop-blur-sm shadow-2xl border transition-colors duration-300
+          bg-gradient-to-b from-white via-gray-50 to-white border-gray-200
+          dark:bg-gradient-to-b dark:from-gray-700/50 dark:to-gray-800/50 dark:border-gray-600/30"
+        >
           <div className="mb-6">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/25">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,7 +28,7 @@ export default function TicketPrompt({ onBack }) {
             </h1>
           </div>
 
-          <p className="mb-8 text-gray-300 text-lg leading-relaxed">
+          <p className="mb-8 text-lg leading-relaxed text-[#374151] dark:text-gray-300">
             You need a virtual tour pass to unlock access to our exclusive museum galleries and immersive experiences.
           </p>
 
@@ -40,7 +42,7 @@ export default function TicketPrompt({ onBack }) {
 
           <button
             onClick={onBack}
-            className="mt-4 text-gray-400 hover:text-white transition-colors duration-300 underline"
+            className="mt-4 text-blue-600 dark:text-gray-400 hover:text-blue-700 dark:hover:text-white transition-colors duration-300 underline"
           >
             Back to Floor Plan
           </button>

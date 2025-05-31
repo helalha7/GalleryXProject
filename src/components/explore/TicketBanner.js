@@ -1,4 +1,3 @@
-// src/components/explore/TicketBanner.tsx
 'use client';
 
 import Link from 'next/link';
@@ -7,7 +6,10 @@ import GradientButtonLink from '../shared/buttons/GradientLinkButton';
 
 export default function TicketBanner() {
   return (
-    <GradientCard hover = {false} className="mb-10 p-8 bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10 border border-yellow-500/30 text-center">
+    <GradientCard
+      hover={false}
+      className="mb-10 p-8 bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10 border border-yellow-500/30 text-center"
+    >
       <div className="flex items-center justify-center mb-4">
         <svg
           className="w-8 h-8 text-yellow-400 mr-3"
@@ -24,7 +26,7 @@ export default function TicketBanner() {
         </svg>
         <h3 className="text-xl font-bold text-yellow-400">Ticket Required</h3>
       </div>
-      <p className="text-gray-300 mb-6 text-lg">
+      <p className="text-lg text-[#374151] dark:text-gray-300 mb-6">
         Purchase a virtual tour pass to unlock full access to all museum galleries and interactive experiences.
       </p>
       <GradientButtonLink href="/tickets">

@@ -1,29 +1,38 @@
-import { Playfair_Display, Raleway } from "next/font/google";
-import "../styles/globals.css";
-import Header from "../components/shared/Header";
-import AnimatedBackdrop from "@/components/shared/AnimatedBackdrop";
+'use client';
+
+import { ThemeProvider } from 'next-themes';
+import { Playfair_Display, Raleway } from 'next/font/google';
+import '../styles/globals.css';
+
 const playfair = Playfair_Display({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-playfair",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-playfair',
 });
 
 const raleway = Raleway({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-raleway",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-raleway',
 });
-
-export const metadata = {
-  title: "GalleryX - Virtual Museum Experience",
-  description: "Explore art and artifacts from around the world in our virtual museum.",
-};
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
-        <main className="relative z-10">{children}</main>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`min-h-screen overflow-x-hidden antialiased transition-colors duration-300 ${playfair.variable} ${raleway.variable}`}
+        suppressHydrationWarning
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark" // ✅ Ensures it starts in dark mode
+          enableSystem={false}
+          storageKey="galleryx-theme"
+        >
+          <div className="min-h-screen flex flex-col bg-[#f9fafb] text-[#111827] dark:bg-gray-900 dark:text-white">
+            <main className="relative z-10">{children}</main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

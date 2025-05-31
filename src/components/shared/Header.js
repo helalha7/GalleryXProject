@@ -4,17 +4,21 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getUserFromSession, clearSession } from '@/utils/sessionStorageHandler';
+import { useTheme } from 'next-themes';
+import { SunIcon, MoonIcon, MenuIcon, XIcon } from 'lucide-react';
 
 export default function Header() {
   const [user, setUser] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
+    setMounted(true);
     const sessionUser = getUserFromSession();
-    if (sessionUser) {
-      setUser(sessionUser);
-    }
+    if (sessionUser) setUser(sessionUser);
   }, []);
 
   const handleLogout = () => {
@@ -23,88 +27,148 @@ export default function Header() {
     router.push('/');
   };
 
+  const toggleTheme = () => {
+    if (!mounted) return;
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
+  const toggleMenu = () => setMenuOpen(prev => !prev);
+
   const isLoggedIn = !!user;
   const isAdmin = user?.role === 'admin';
 
   return (
-    <header className="bg-gray-900/95 backdrop-blur-sm text-white py-4 px-6 border-b border-gray-700/50 relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 opacity-50"></div>
-
+    <header className="bg-[#111827] text-white dark:bg-gray-900/95 dark:text-white backdrop-blur-sm py-4 px-6 border-b border-gray-800 dark:border-gray-700/50 relative transition-colors duration-300">
       <div className="max-w-7xl mx-auto flex justify-between items-center relative z-10">
         <Link
           href="/"
-          className="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent hover:from-blue-300 hover:to-cyan-200 transition-all duration-300"
+          className="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent hover:from-blue-400 hover:to-cyan-300 transition-all duration-300"
         >
           GalleryX
         </Link>
 
-        <nav className="flex items-center space-x-2 md:space-x-6">
-          <Link
-            href="/"
-            className={`group relative px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${pathname === '/'
-                ? 'text-blue-300 bg-blue-500/20 border border-blue-500/30'
-                : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-              }`}
-          >
-            <span className="relative z-10">Home</span>
-            {pathname === '/' && (
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full"></div>
-            )}
-          </Link>
+        {/* Mobile Menu Button */}
+        <button
+          onClick={toggleMenu}
+          className="md:hidden p-2 text-white"
+          aria-label="Toggle Menu"
+        >
+          {menuOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+        </button>
 
-          {isLoggedIn && (
-            <Link
-              href="/explore"
-              className={`group relative px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${pathname.startsWith('/explore')
-                  ? 'text-blue-300 bg-blue-500/20 border border-blue-500/30'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                }`}
-            >
-              <span className="relative z-10">Explore</span>
-              {pathname.startsWith('/explore') && (
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full"></div>
-              )}
-            </Link>
-          )}
-
-          {isLoggedIn ? (
-            <>
-              {isAdmin && (
-                <Link
-                  href="/admin"
-                  className={`group relative px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${pathname.startsWith('/admin')
-                      ? 'text-purple-300 bg-purple-500/20 border border-purple-500/30'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                    }`}
-                >
-                  <span className="relative z-10">Dashboard</span>
-                  {pathname.startsWith('/admin') && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full"></div>
-                  )}
-                </Link>
-              )}
-
-              <button
-                onClick={handleLogout}
-                className="group relative px-4 py-2 text-sm md:text-base font-semibold text-white transition-all duration-300 bg-gradient-to-r from-red-600 to-red-500 rounded-full hover:from-red-500 hover:to-red-400 hover:scale-105 hover:shadow-lg hover:shadow-red-500/25 transform"
-              >
-                <span className="relative z-10">Logout</span>
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-red-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              </button>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="group relative px-6 py-2 text-sm md:text-base font-semibold text-white transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full hover:from-blue-500 hover:to-blue-400 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 transform"
-            >
-              <span className="relative z-10">Login</span>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            </Link>
-          )}
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center space-x-2 md:space-x-6">
+          <NavItems
+            pathname={pathname}
+            isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+            toggleTheme={toggleTheme}
+            mounted={mounted}
+            theme={theme}
+            handleLogout={handleLogout}
+          />
         </nav>
       </div>
 
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden mt-4 space-y-3 text-sm flex flex-col items-start px-6 pb-6">
+          <NavItems
+            pathname={pathname}
+            isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+            toggleTheme={toggleTheme}
+            mounted={mounted}
+            theme={theme}
+            handleLogout={handleLogout}
+            mobile
+          />
+        </div>
+      )}
+
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
     </header>
+  );
+}
+
+function NavItems({
+  pathname,
+  isLoggedIn,
+  isAdmin,
+  toggleTheme,
+  mounted,
+  theme,
+  handleLogout,
+  mobile = false,
+}) {
+  const linkClasses = (active) =>
+    `group relative px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+      active
+        ? 'bg-gray-700 text-white border border-gray-600 dark:text-blue-300 dark:bg-blue-500/20 dark:border-blue-500/30'
+        : 'text-white hover:bg-gray-800 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700/50'
+    } ${mobile ? 'w-full text-left' : ''}`;
+
+  return (
+    <>
+      <Link href="/" className={linkClasses(pathname === '/')}>
+        Home
+      </Link>
+
+      {isLoggedIn && (
+        <Link href="/explore" className={linkClasses(pathname.startsWith('/explore'))}>
+          Explore
+        </Link>
+      )}
+
+      {/* Theme Toggle */}
+      {mounted ? (
+        <button
+          onClick={toggleTheme}
+          className={`p-2 rounded-full border border-gray-600 dark:border-gray-600 hover:border-blue-400 transition-colors ${
+            mobile ? 'mt-2' : ''
+          }`}
+          title="Toggle Theme"
+        >
+          {(theme === 'dark' || !theme) ? (
+            <SunIcon className="h-5 w-5 text-yellow-300" />
+          ) : (
+            <MoonIcon className="h-5 w-5 text-white" />
+          )}
+        </button>
+      ) : (
+        <div className={`w-9 h-9 rounded-full border border-gray-600 animate-pulse ${mobile ? 'mt-2' : ''}`} />
+      )}
+
+      {/* Auth buttons */}
+      {isLoggedIn ? (
+        <>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className={linkClasses(pathname.startsWith('/admin'))}
+            >
+              Dashboard
+            </Link>
+          )}
+          <button
+            onClick={handleLogout}
+            className={`px-6 py-2 font-semibold text-white transition-all duration-300 bg-gradient-to-r from-red-600 to-red-500 rounded-full hover:from-red-500 hover:to-red-400 hover:scale-105 hover:shadow-lg hover:shadow-red-500/25 transform ${
+              mobile ? 'w-full text-left' : ''
+            }`}
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <Link
+          href="/login"
+          className={`px-6 py-2 font-semibold text-white transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full hover:from-blue-500 hover:to-blue-400 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 transform ${
+            mobile ? 'w-full text-left' : ''
+          }`}
+        >
+          Login
+        </Link>
+      )}
+    </>
   );
 }

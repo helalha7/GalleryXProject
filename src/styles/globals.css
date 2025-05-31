@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
+/* Light Theme Defaults */
 :root {
   --foreground: #171717;
   --background: #ffffff;
@@ -13,14 +12,37 @@
   --muted: #f1f5f9;
 }
 
+/* Dark Theme Overrides */
+html.dark {
+  --foreground: #ffffff;
+  --background: #0f172a; /* deep dark blue-gray for full dark coverage */
+  --primary: #1e293b;
+  --secondary: #94a3b8;
+  --accent: #38bdf8;
+  --muted: #1e293b;
+}
+
+/* Apply theme colors */
+html,
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-raleway), system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-playfair), serif;
+}
+
+/* Prevent scroll edge flashes */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  z-index: -10;
 }
 
 /* Modal animations */
@@ -46,6 +68,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: opacity 300ms, transform 300ms;
 }
 
+/* Tailwind component layers */
 @layer components {
   .btn-primary {
     @apply bg-white text-black font-medium py-2 px-4 rounded-full hover:bg-white transition-all;
@@ -54,15 +77,15 @@ h1, h2, h3, h4, h5, h6 {
   .btn-secondary {
     @apply bg-white text-black border border-gray-300 font-medium py-2 px-4 rounded-full hover:bg-gray-100 transition-all;
   }
-  
+
   .card {
     @apply bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300;
   }
-  
+
   .input-field {
     @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black;
   }
-  
+
   .gallery-item {
     @apply rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer bg-white;
   }

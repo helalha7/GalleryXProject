@@ -11,6 +11,7 @@ import {
   getTokenFromSession,
 } from '@/utils/sessionStorageHandler';
 import { fetchUserTicket } from '@/lib/api/ticket'; // updated path
+import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
 
 export default function TicketPage() {
   const [user, setUser] = useState(null);
@@ -55,8 +56,9 @@ export default function TicketPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <>
       <Header user={user} />
+      <AnimatedBackdrop/>
       <main className="flex-1 flex justify-center items-center p-6">
         {!ticket ? (
           <TicketForm onSuccess={handlePurchase} />
@@ -64,6 +66,6 @@ export default function TicketPage() {
           <TicketSuccess ticket={ticket} />
         )}
       </main>
-    </div>
+    </>
   );
 }
