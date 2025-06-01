@@ -25,11 +25,11 @@ export async function purchaseTicket(token) {
   });
 
   const ticket = await handleResponse(res);
-
+  console.log(ticket)
   return {
     id: ticket._id,
-    validUntil: ticket.validUntil,
-    createdAt: ticket.createdAt,
+    validUntil: ticket.expiresAt,
+    createdAt: ticket.purchaseDate,
   };
 }
 
@@ -41,10 +41,10 @@ export async function fetchUserTicket(token) {
   });
 
   const ticket = await handleResponse(res);
-
+  console.log(ticket)
   return {
     id: ticket._id,
-    validUntil: ticket.validUntil,
-    createdAt: ticket.createdAt,
+    validUntil: ticket.expiresAt,
+    createdAt: ticket.purchaseDate,
   };
 }

@@ -11,12 +11,6 @@ export default function TextInput({
 }) {
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block mb-2 font-medium text-gray-700 dark:text-gray-300 transition-colors"
-      >
-        {label}
-      </label>
       <input
         id={id}
         type={type}

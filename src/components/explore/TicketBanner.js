@@ -29,7 +29,7 @@ export default function TicketBanner() {
       <p className="text-lg text-[#374151] dark:text-gray-300 mb-6">
         Purchase a virtual tour pass to unlock full access to all museum galleries and interactive experiences.
       </p>
-      <GradientButtonLink href="/tickets">
+      <GradientButtonLink href="/buy-ticket">
         Purchase Ticket
       </GradientButtonLink>
     </GradientCard>
