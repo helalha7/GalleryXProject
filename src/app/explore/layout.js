@@ -5,7 +5,7 @@ import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
 import useRequireAuth from '@/hooks/guards/useRequireAuth';
 
 export default function ExploreLayout({ children }) {
-  const { user, loading } = useRequireAuth('/login?redirect=/explore');
+  const { user, loading } = useRequireAuth('/auth?redirect=/explore');
 
   if (loading) {
     return (

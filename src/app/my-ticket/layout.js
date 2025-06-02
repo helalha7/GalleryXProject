@@ -5,7 +5,7 @@ import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
 import useRequireAuth from '@/hooks/guards/useRequireAuth';
 
 export default function MyTicketLayout({ children }) {
-    const { user, loading } = useRequireAuth('/login?redirect=/my-ticket');
+    const { user, loading } = useRequireAuth('/auth?redirect=/my-ticket');
 
     if (loading) {
         return (

@@ -9,7 +9,7 @@ import useRequireAuth from '@/hooks/guards/useRequireAuth';
 import { getTokenFromSession } from '@/utils/sessionStorageHandler';
 
 export default function BuyTicketLayout({ children }) {
-    const { user, loading } = useRequireAuth('/login?redirect=/buy-ticket');
+    const { user, loading } = useRequireAuth('/auth?redirect=/buy-ticket');
     const [checkingTicket, setCheckingTicket] = useState(true);
     const router = useRouter();
 

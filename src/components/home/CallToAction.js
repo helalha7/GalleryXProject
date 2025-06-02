@@ -19,7 +19,7 @@ export default function CallToAction() {
           <p className="text-xl md:text-2xl mb-10 text-[#374151] dark:text-gray-300 leading-relaxed transition-colors duration-300">
             Book a ticket now and begin exploring GalleryX's revolutionary virtual museum experience
           </p>
-          <GradientButtonLink href="/tickets">
+          <GradientButtonLink href="/buy-ticket">
             Book Your Ticket Now
           </GradientButtonLink>
         </div>
