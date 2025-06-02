@@ -21,6 +21,18 @@ export function getTokenFromSession() {
     return null;
 }
 
+export function updateUserTicketInSession(ticket) {
+    if (typeof window !== 'undefined') {
+        const raw = sessionStorage.getItem('user');
+        if (!raw) return;
+
+        const user = JSON.parse(raw);
+        user.ticket = ticket;
+        sessionStorage.setItem('user', JSON.stringify(user));
+    }
+}
+
+
 export function clearSession() {
     if (typeof window !== 'undefined') {
         sessionStorage.removeItem('user');
