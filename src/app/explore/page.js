@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '../../components/shared/Header';
-import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
 import GALLERIES from '@/data/galleries';
 import GalleryListSection from '@/components/explore/GalleryListSection';
 import MuseumMapSection from '@/components/explore/MuseumMapSection';
@@ -13,82 +11,50 @@ import TicketPrompt from '@/components/explore/TicketPrompt';
 import { getUserFromSession } from '@/utils/sessionStorageHandler';
 
 export default function ExplorePage() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [hasTicket, setHasTicket] = useState(false);
-  const [ticketRequired, setTicketRequired] = useState(false);
   const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [ticketRequired, setTicketRequired] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const storedUser = getUserFromSession();
-      if (!storedUser) {
-        router.push('/login?redirect=/explore');
-        return;
-      }
+    const storedUser = getUserFromSession();
+    setUser(storedUser || null);
+  }, []);
 
-      setUser(storedUser);
-      setHasTicket(storedUser.role === 'admin' || !!storedUser.ticket);
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, [router]);
+  const hasTicket = user?.role === 'admin' || !!user?.ticket;
 
   const handleGallerySelect = (gallery) => {
     if (!hasTicket) return setTicketRequired(true);
 
     const galleryId = gallery?._id || 'unknown-gallery';
-    if (galleryId === 'gallery-a') router.push('/explore/egyptian-gallery');
-    else if (galleryId === 'roman-gallery') router.push('/explore/roman-gallery');
-    else if (galleryId === 'mona-lisa-gallery') router.push('/explore/mona-lisa-gallery');
-    else router.push(`/explore/gallery/${galleryId}`);
+    switch (galleryId) {
+      case 'gallery-a':
+        router.push('/explore/gallery/egyptian-gallery');
+        break;
+      case 'roman-gallery':
+        router.push('/explore/gallery/roman-gallery');
+        break;
+      case 'mona-lisa-gallery':
+        router.push('/explore/gallery/mona-lisa-gallery');
+        break;
+      default:
+        router.push(`/explore/gallery/${galleryId}`);
+    }
   };
-
-  if (loading) {
-    return (
-      <>
-        <div className="relative z-50">
-          <Header user={user} />
-        </div>
-        <AnimatedBackdrop />
-        <main className="flex-1 p-6 flex items-center justify-center relative z-10 bg-[#f9fafb] dark:bg-gray-900 transition-colors duration-300">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-gray-600 border-t-blue-500 rounded-full animate-spin mx-auto mb-6"></div>
-            <p className="text-xl font-medium text-[#374151] dark:text-gray-300">
-              Preparing your virtual museum experience...
-            </p>
-          </div>
-        </main>
-      </>
-    );
-  }
 
   if (ticketRequired) {
     return <TicketPrompt onBack={() => setTicketRequired(false)} />;
   }
 
   return (
-    <>
-      <div className="relative z-50">
-        <Header user={user} />
-      </div>
-      <AnimatedBackdrop />
-      <main className="flex-1 p-6 relative z-10 bg-[#f9fafb] dark:bg-gray-900 transition-colors duration-300">
-        <div className="max-w-6xl mx-auto">
-          {!hasTicket && <TicketBanner />}
-          <MuseumMapSection
-            hasTicket={hasTicket}
-            onGallerySelect={handleGallerySelect}
-          />
-          <GalleryListSection
-            galleries={GALLERIES}
-            hasTicket={hasTicket}
-            onGallerySelect={handleGallerySelect}
-          />
-          <CallToAction hasTicket={hasTicket} />
-        </div>
-      </main>
-    </>
+    <div className="max-w-6xl mx-auto">
+      {!hasTicket && <TicketBanner />}
+      <MuseumMapSection hasTicket={hasTicket} onGallerySelect={handleGallerySelect} />
+      <GalleryListSection
+        galleries={GALLERIES}
+        hasTicket={hasTicket}
+        onGallerySelect={handleGallerySelect}
+      />
+      <CallToAction hasTicket={hasTicket} />
+    </div>
   );
 }

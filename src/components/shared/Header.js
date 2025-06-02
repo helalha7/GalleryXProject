@@ -209,7 +209,7 @@ function NavItems({
         </>
       ) : (
         <Link
-          href="/login"
+          href="/auth"
           className={`px-6 py-2 font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-full hover:from-blue-500 hover:to-blue-400 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 transform ${mobile ? 'w-full text-left' : ''
             }`}
         >

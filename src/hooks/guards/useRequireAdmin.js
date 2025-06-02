@@ -1,15 +1,24 @@
 'use client';
-import { useEffect } from 'react';
+
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUserFromSession } from '@/utils/sessionStorageHandler';
 
-export default function useRequireAdmin() {
-    const router = useRouter();
+export default function useRequireAdmin(redirectTo = '/auth') {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const user = getUserFromSession();
-        if (user?.role !== 'admin') {
-            router.push('/');
-        }
-    }, [router]);
+  useEffect(() => {
+    const storedUser = getUserFromSession();
+
+    if (!storedUser || storedUser.role !== 'admin') {
+      router.push(redirectTo);
+    } else {
+      setUser(storedUser);
+      setLoading(false);
+    }
+  }, [router, redirectTo]);
+
+  return { user, loading };
 }

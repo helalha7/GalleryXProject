@@ -2,26 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getTokenFromSession, getUserFromSession } from '@/utils/sessionStorageHandler';
 import { fetchUserTicket } from '@/lib/api/ticket';
 import SectionHeader from '@/components/shared/SectionHeader';
 import GradientCard from '@/components/shared/GradientCard';
-import Header from '@/components/shared/Header';
+import { getTokenFromSession } from '@/utils/sessionStorageHandler';
 
 export default function MyTicketPage() {
     const [ticket, setTicket] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-    const router = useRouter();
 
     useEffect(() => {
-        const user = getUserFromSession();
         const token = getTokenFromSession();
-        if (!user) {
-            router.push('/login');
-            return;
-        }
-
         const fetchTicket = async () => {
             try {
                 const res = await fetchUserTicket(token);
@@ -34,7 +26,7 @@ export default function MyTicketPage() {
         };
 
         fetchTicket();
-    }, [router]);
+    }, []);
 
     if (loading) {
         return <div className="p-8 text-center text-lg">Loading your ticket...</div>;
@@ -50,10 +42,8 @@ export default function MyTicketPage() {
     }
 
     return (
-        <>
-            <Header/>
-            <div className="max-w-xl mx-auto py-20 px-6">
-            <SectionHeader title={'🎟️ Your Ticket Info'} />
+        <div className="max-w-xl mx-auto py-20 px-6">
+            <SectionHeader title="🎟️ Your Ticket Info" />
             <GradientCard>
                 <div className="text-secondary dark:text-gray-300">
                     <strong>Ticket ID:</strong>{' '}
@@ -69,7 +59,5 @@ export default function MyTicketPage() {
                 </div>
             </GradientCard>
         </div>
-        </>
-      
     );
 }

@@ -111,3 +111,4 @@ export const EGYPTIAN_ARTIFACTS = [
     coords: { x: 790, y: 100, width: 300, height: 380 }
   }
 ];
+
