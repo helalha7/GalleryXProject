@@ -1,26 +1,35 @@
+// hooks/guards/useRequireTicket.js
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUserFromSession } from '@/utils/sessionStorageHandler';
+import { getTokenFromSession } from '@/utils/sessionStorageHandler';
+import { fetchUserTicket } from '@/lib/api/ticket';
 
-export default function useRequireTicket(redirectTo = '/buy-ticket') {
-  const router = useRouter();
-  const [user, setUser] = useState(null);
+export default function useRequireTicket() {
   const [loading, setLoading] = useState(true);
+  const [hasValidTicket, setHasValidTicket] = useState(false);
 
   useEffect(() => {
-    const storedUser = getUserFromSession();
+    const checkTicket = async () => {
+      const token = getTokenFromSession();
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
-    const isValid = storedUser && (storedUser.role === 'admin' || !!storedUser.ticket);
+      try {
+        const ticket = await fetchUserTicket(token);
+        const isValid = new Date(ticket.validUntil) > new Date();
+        setHasValidTicket(isValid);
+      } catch {
+        setHasValidTicket(false);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (!isValid) {
-      router.push(redirectTo);
-    } else {
-      setUser(storedUser);
-      setLoading(false);
-    }
-  }, [router, redirectTo]);
+    checkTicket();
+  }, []);
 
-  return { user, loading };
+  return { hasValidTicket, loading };
 }

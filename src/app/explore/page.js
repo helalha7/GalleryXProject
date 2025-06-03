@@ -1,29 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GALLERIES from '@/data/galleries';
 import GalleryListSection from '@/components/explore/GalleryListSection';
 import MuseumMapSection from '@/components/explore/MuseumMapSection';
 import CallToAction from '@/components/explore/CallToAction';
 import TicketBanner from '@/components/explore/TicketBanner';
-import TicketPrompt from '@/components/explore/TicketPrompt';
-import { getUserFromSession } from '@/utils/sessionStorageHandler';
+import useRequireTicket from '@/hooks/guards/useRequireTicket';
 
 export default function ExplorePage() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [ticketRequired, setTicketRequired] = useState(false);
-
-  useEffect(() => {
-    const storedUser = getUserFromSession();
-    setUser(storedUser || null);
-  }, []);
-
-  const hasTicket = user?.role === 'admin' || !!user?.ticket;
+  const { hasValidTicket, loading } = useRequireTicket();
 
   const handleGallerySelect = (gallery) => {
-    if (!hasTicket) return setTicketRequired(true);
 
     const galleryId = gallery?._id || 'unknown-gallery';
     switch (galleryId) {
@@ -41,20 +30,24 @@ export default function ExplorePage() {
     }
   };
 
-  if (ticketRequired) {
-    return <TicketPrompt onBack={() => setTicketRequired(false)} />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-black dark:text-white">Checking ticket status...</p>
+      </div>
+    );
   }
 
   return (
     <div className="max-w-6xl mx-auto">
-      {!hasTicket && <TicketBanner />}
-      <MuseumMapSection hasTicket={hasTicket} onGallerySelect={handleGallerySelect} />
+      {!hasValidTicket && <TicketBanner />}
+      <MuseumMapSection hasTicket={hasValidTicket} onGallerySelect={handleGallerySelect} />
       <GalleryListSection
         galleries={GALLERIES}
-        hasTicket={hasTicket}
+        hasTicket={hasValidTicket}
         onGallerySelect={handleGallerySelect}
       />
-      <CallToAction hasTicket={hasTicket} />
+      <CallToAction hasTicket={hasValidTicket} />
     </div>
   );
 }

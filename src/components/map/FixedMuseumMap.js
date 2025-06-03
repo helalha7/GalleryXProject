@@ -44,5 +44,5 @@ export default function FixedMuseumMap({ onGallerySelect }) {
       </div>
     </GradientCard>
   );
-  
+
 }

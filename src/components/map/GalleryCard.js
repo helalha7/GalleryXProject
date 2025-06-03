@@ -40,18 +40,18 @@ export default function GalleryCard({ gallery, onClick }) {
         backgroundImage: `url(${gallery.image})`,
       }}
     >
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-black/60 z-0" />
+      {/* Theme-aware overlay */}
+      <div className="absolute inset-0 z-0 bg-white/70 dark:bg-black/60 transition-colors duration-300" />
 
       {/* Content */}
       <div className="relative z-10">
-        <h3 className="font-display font-semibold mb-3 text-lg sm:text-xl text-white">
+        <h3 className="font-display font-semibold mb-3 text-lg sm:text-xl text-[#111827] dark:text-white">
           {gallery.name}
         </h3>
 
         {isHovered ? (
           <>
-            <p className="text-gray-300 mb-4 text-sm sm:text-base">
+            <p className="text-sm sm:text-base mb-4 text-[#374151] dark:text-gray-300">
               {gallery.description}
             </p>
             <button
@@ -63,7 +63,7 @@ export default function GalleryCard({ gallery, onClick }) {
             </button>
           </>
         ) : (
-          <p className="italic text-gray-300 text-sm select-none pointer-events-none">
+          <p className="italic text-sm text-[#374151] dark:text-gray-300 select-none pointer-events-none">
             Click to explore
           </p>
         )}

@@ -9,29 +9,39 @@ import useRequireAuth from '@/hooks/guards/useRequireAuth';
 import { getTokenFromSession } from '@/utils/sessionStorageHandler';
 
 export default function BuyTicketLayout({ children }) {
-    const { user, loading } = useRequireAuth('/auth?redirect=/buy-ticket');
+    const { user, loading, isAuthenticated } = useRequireAuth();
     const [checkingTicket, setCheckingTicket] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
+        if (!loading && !isAuthenticated) {
+            router.push('/auth?redirect=/buy-ticket');
+            return;
+        }
+
         const checkTicket = async () => {
             const token = getTokenFromSession();
-            if (!token) return;
+            if (!token) {
+                setCheckingTicket(false);
+                return;
+            }
 
             try {
                 const ticket = await fetchUserTicket(token);
                 if (ticket) {
-                    router.push('/my-ticket'); // ✅ Already has ticket → redirect
+                    router.push('/my-ticket');
                 }
-            } catch (e) {
-                // no ticket → do nothing
+            } catch {
+                // No ticket or error: stay on page
             } finally {
                 setCheckingTicket(false);
             }
         };
 
-        if (!loading) checkTicket();
-    }, [loading, router]);
+        if (!loading && isAuthenticated) {
+            checkTicket();
+        }
+    }, [loading, isAuthenticated, router]);
 
     if (loading || checkingTicket) {
         return (
