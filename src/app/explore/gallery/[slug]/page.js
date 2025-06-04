@@ -7,7 +7,8 @@ import ArtifactDetail from '@/components/artifact/ArtifactDetail';
 import TicketPrompt from '@/components/explore/TicketPrompt';
 import { galleryMap } from '@/data/galleryConfig';
 import useRequireTicket from '@/hooks/guards/useRequireTicket';
-
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import SectionHeader from '@/components/shared/SectionHeader';
 export default function GalleryPage() {
     const { slug } = useParams();
     const router = useRouter();
@@ -19,9 +20,7 @@ export default function GalleryPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#f9fafb] dark:bg-gray-900">
-                <p className="text-lg text-[#111827] dark:text-gray-100">Checking ticket...</p>
-            </div>
+            <LoadingSpinner />
         );
     }
 
@@ -42,9 +41,7 @@ export default function GalleryPage() {
             <main className="flex-1 p-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
-                        <h1 className="text-3xl font-display font-bold text-[#111827] dark:text-white">
-                            {gallery.title}
-                        </h1>
+                        <SectionHeader title= {gallery.title}/>
                         <button
                             onClick={() => router.push('/explore')}
                             className="flex items-center text-blue-500 hover:text-blue-400 dark:text-blue-300 dark:hover:text-blue-200 transition-colors"

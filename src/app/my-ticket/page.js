@@ -6,6 +6,8 @@ import { fetchUserTicket } from '@/lib/api/ticket';
 import SectionHeader from '@/components/shared/SectionHeader';
 import GradientCard from '@/components/shared/GradientCard';
 import { getTokenFromSession } from '@/utils/sessionStorageHandler';
+import GradientButtonLink from '@/components/shared/buttons/GradientLinkButton';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function MyTicketPage() {
     const [ticket, setTicket] = useState(null);
@@ -29,7 +31,7 @@ export default function MyTicketPage() {
     }, []);
 
     if (loading) {
-        return <div className="p-8 text-center text-lg">Loading your ticket...</div>;
+        return (<LoadingSpinner/>);
     }
 
     if (error) {
@@ -44,7 +46,8 @@ export default function MyTicketPage() {
     return (
         <div className="max-w-xl mx-auto py-20 px-6">
             <SectionHeader title="🎟️ Your Ticket Info" />
-            <GradientCard>
+
+            <GradientCard className="p-6 sm:p-8">
                 <div className="text-secondary dark:text-gray-300">
                     <strong>Ticket ID:</strong>{' '}
                     <span className="font-mono">{ticket.id}</span>
@@ -58,6 +61,13 @@ export default function MyTicketPage() {
                     {new Date(ticket.createdAt).toLocaleString()}
                 </div>
             </GradientCard>
+
+            <div className="mt-6 flex justify-center">
+                <GradientButtonLink href="/explore">
+                    Start Exploring
+                </GradientButtonLink>
+            </div>
         </div>
+
     );
 }

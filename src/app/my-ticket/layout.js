@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/shared/Header';
 import AnimatedBackdrop from '@/components/shared/AnimatedBackdrop';
 import useRequireAuth from '@/hooks/guards/useRequireAuth';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function MyTicketLayout({ children }) {
     const { user, loading, isAuthenticated } = useRequireAuth();
@@ -18,9 +19,7 @@ export default function MyTicketLayout({ children }) {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen text-lg">
-                Authenticating...
-            </div>
+            <LoadingSpinner/>
         );
     }
 
