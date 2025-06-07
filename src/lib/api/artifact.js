@@ -9,39 +9,44 @@ function getAuthHeaders(token) {
 
 async function handleResponse(res) {
     const data = await res.json();
-
     if (res.ok) return data.data ?? data;
 
     const message = data.message || data.error || 'Unexpected error occurred.';
     throw new Error(message);
 }
 
-// ✅ Get all artifacts
-export async function fetchAllArtifacts() {
+// ✅ Get all artifacts (requires valid ticket)
+export async function fetchAllArtifacts(token) {
     const res = await fetch(BASE_URL, {
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: getAuthHeaders(token),
     });
 
     return await handleResponse(res);
 }
 
-// ✅ Get artifacts by gallery name
-export async function fetchArtifactsByGallery(galleryName) {
-    const res = await fetch(`${BASE_URL}/gallery?gallery=${encodeURIComponent(galleryName)}`, {
-        method: 'GET',
-        headers: getAuthHeaders(),
-    });
+// ✅ Get artifacts by gallery name (requires valid ticket)
+export async function fetchArtifactsByGallery(galleryName, token) {
+    const res = await fetch(
+        `${BASE_URL}/gallery?gallery=${encodeURIComponent(galleryName)}`,
+        {
+            method: 'GET',
+            headers: getAuthHeaders(token),
+        }
+    );
 
     return await handleResponse(res);
 }
 
-// ✅ Increment views by artifact name
-export async function incrementArtifactViewsByName(name) {
-    const res = await fetch(`${BASE_URL}/views?name=${encodeURIComponent(name)}`, {
-        method: 'PATCH',
-        headers: getAuthHeaders(),
-    });
+// ✅ Increment views by artifact name (requires valid ticket)
+export async function incrementArtifactViewsByName(name, token) {
+    const res = await fetch(
+        `${BASE_URL}/views?name=${encodeURIComponent(name)}`,
+        {
+            method: 'PATCH',
+            headers: getAuthHeaders(token),
+        }
+    );
 
     return await handleResponse(res);
 }

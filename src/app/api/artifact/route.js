@@ -1,27 +1,37 @@
-import { NextResponse } from 'next/server';
+import { requireAdmin, requireValidTicket } from '@/lib/middleware/auth';
 import {
-    handleCreateArtifact,
     handleGetAllArtifacts,
+    handleCreateArtifact,
 } from '@/core/controllers/artifactController';
 
 export async function GET(req) {
-    const res = {
-        status: (code) => ({
-            json: (body) => NextResponse.json(body, { status: code }),
-        }),
-    };
+    const { authorized, user, ticket, error, status } = await requireValidTicket(req);
 
-    return await handleGetAllArtifacts(req, res);
+    if (!authorized) {
+        return new Response(JSON.stringify({
+            success: false,
+            message: error || 'Access denied. Valid ticket required.',
+        }), { status: status || 403 });
+    }
+
+    req.user = user;
+    req.ticket = ticket;
+
+    return await handleGetAllArtifacts(req);
 }
 
 export async function POST(req) {
-    const body = await req.json();
-    const reqWithBody = { ...req, body };
-    const res = {
-        status: (code) => ({
-            json: (body) => NextResponse.json(body, { status: code }),
-        }),
-    };
+    const { authorized, user, error, status } = await requireAdmin(req);
 
-    return await handleCreateArtifact(reqWithBody, res);
+    if (!authorized) {
+        return new Response(JSON.stringify({
+            success: false,
+            message: error || 'Admins only.',
+        }), { status: status || 403 });
+    }
+
+    const body = await req.json();
+    const reqWithUserAndBody = { ...req, user, body };
+
+    return await handleCreateArtifact(reqWithUserAndBody);
 }

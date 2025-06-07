@@ -1,8 +1,7 @@
 // /data/galleryConfig.ts
 import RomanGallery from '@/components/gallery/RomanGallery';
 import MonaLisaGallery from '@/components/gallery/MonaLisaGallery';
-import InteractiveGallery from '@/components/gallery/InteractiveGallery';
-import { EGYPTIAN_ARTIFACTS } from '@/data/artifacts';
+import AncientEgyptianGallery from '@/components/gallery/AncientEgyptianGallery';
 
 export const galleryMap = {
   'roman-gallery': {
@@ -18,11 +17,6 @@ export const galleryMap = {
   'egyptian-gallery': {
     title: 'Ancient Egyptian Gallery',
     description: 'Ancient Egyptian artifacts dating back thousands of years.',
-    component: (
-      <InteractiveGallery
-        galleryImage="/images/galleryA.jpg"
-        artifacts={EGYPTIAN_ARTIFACTS}
-      />
-    ),
+    component: <AncientEgyptianGallery/>
   },
 };

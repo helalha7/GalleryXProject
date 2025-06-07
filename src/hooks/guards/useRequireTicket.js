@@ -7,21 +7,32 @@ import { fetchUserTicket } from '@/lib/api/ticket';
 
 export default function useRequireTicket() {
   const [loading, setLoading] = useState(true);
+  const [ticket, setTicket] = useState(null);
   const [hasValidTicket, setHasValidTicket] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const checkTicket = async () => {
       const token = getTokenFromSession();
       if (!token) {
+        setError('No token found');
         setLoading(false);
         return;
       }
 
       try {
-        const ticket = await fetchUserTicket(token);
-        const isValid = new Date(ticket.validUntil) > new Date();
+        const res = await fetchUserTicket(token);
+        setTicket(res);
+
+        const validUntil = new Date(res.validUntil);
+        const isValid = validUntil > new Date();
+
         setHasValidTicket(isValid);
-      } catch {
+        if (!isValid) {
+          setError('Your ticket has expired.');
+        }
+      } catch (err) {
+        setError(err.message || 'Could not fetch ticket.');
         setHasValidTicket(false);
       } finally {
         setLoading(false);
@@ -31,5 +42,5 @@ export default function useRequireTicket() {
     checkTicket();
   }, []);
 
-  return { hasValidTicket, loading };
+  return { hasValidTicket, ticket, loading, error };
 }

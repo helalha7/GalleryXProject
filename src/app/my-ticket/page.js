@@ -1,44 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchUserTicket } from '@/lib/api/ticket';
 import SectionHeader from '@/components/shared/SectionHeader';
 import GradientCard from '@/components/shared/GradientCard';
-import { getTokenFromSession } from '@/utils/sessionStorageHandler';
 import GradientButtonLink from '@/components/shared/buttons/GradientLinkButton';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import useRequireTicket from '@/hooks/guards/useRequireTicket';
 
 export default function MyTicketPage() {
-    const [ticket, setTicket] = useState(null);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const token = getTokenFromSession();
-        const fetchTicket = async () => {
-            try {
-                const res = await fetchUserTicket(token);
-                setTicket(res);
-            } catch (err) {
-                setError(err.message || 'Ticket not found.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTicket();
-    }, []);
+    const { hasValidTicket, ticket, loading, error } = useRequireTicket();
+    const router = useRouter();
 
     if (loading) {
-        return (<LoadingSpinner/>);
+        return <LoadingSpinner />;
     }
 
-    if (error) {
+    if (!hasValidTicket || !ticket) {
         return (
             <div className="max-w-xl mx-auto py-20 px-6 text-center text-red-600 dark:text-red-400">
                 <h1 className="text-3xl font-bold mb-4">No Ticket Found</h1>
-                <p>{error}</p>
+                <p>{error || 'You don’t have a valid ticket yet.'}</p>
             </div>
         );
     }
@@ -68,6 +49,5 @@ export default function MyTicketPage() {
                 </GradientButtonLink>
             </div>
         </div>
-
     );
 }
