@@ -19,7 +19,15 @@ export default function MyTicketPage() {
         return (
             <div className="max-w-xl mx-auto py-20 px-6 text-center text-red-600 dark:text-red-400">
                 <h1 className="text-3xl font-bold mb-4">No Ticket Found</h1>
-                <p>{error || 'You don’t have a valid ticket yet.'}</p>
+                <p className="mb-6">
+                    {error || 'You don’t have a valid ticket yet.'}
+                </p>
+                <GradientButtonLink
+                    href="/buy-ticket"
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                >
+                    Buy a Ticket
+                </GradientButtonLink>
             </div>
         );
     }
@@ -29,11 +37,11 @@ export default function MyTicketPage() {
             <SectionHeader title="🎟️ Your Ticket Info" />
 
             <GradientCard className="p-6 sm:p-8">
-                <div className="text-secondary dark:text-gray-300">
+                <div className="text-secondary dark:text-gray-300 mb-2">
                     <strong>Ticket ID:</strong>{' '}
                     <span className="font-mono">{ticket.id}</span>
                 </div>
-                <div className="text-secondary dark:text-gray-300">
+                <div className="text-secondary dark:text-gray-300 mb-2">
                     <strong>Valid Until:</strong>{' '}
                     {new Date(ticket.validUntil).toLocaleString()}
                 </div>

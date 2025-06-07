@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Modal from '../shared/Modal';
 import ArtifactDetail from '../artifact/ArtifactDetail';
+import { incrementArtifactViewsByName } from '@/lib/api/artifact';
+import { getTokenFromSession } from '@/utils/sessionStorageHandler';
 
 export default function InteractiveGallery({ galleryImage, artifacts }) {
   const [selectedArtifact, setSelectedArtifact] = useState(null);
@@ -27,10 +29,23 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
     return () => window.removeEventListener('resize', handleResize);
   }, [isLoaded]);
 
-  const handleArtifactClick = (artifact) => {
+  const handleArtifactClick = async (artifact) => {
     setSelectedArtifact(artifact);
     setIsModalOpen(true);
+
+    const token = getTokenFromSession();
+    const viewedKey = `viewed:${artifact.name}`;
+
+    try {
+      if (artifact?.name && token && !sessionStorage.getItem(viewedKey)) {
+        await incrementArtifactViewsByName(artifact.name, token);
+        sessionStorage.setItem(viewedKey, 'true'); // 🧠 Mark as viewed
+      }
+    } catch (err) {
+      console.error('Failed to increment artifact views:', err.message);
+    }
   };
+
 
   const calculatePosition = (coords, originalWidth = 1000, originalHeight = 600) => {
     const { width, height } = dimensions;
