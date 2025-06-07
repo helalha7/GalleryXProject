@@ -15,7 +15,7 @@ export default function CallToAction({ hasTicket }) {
         <p className="text-[#374151] dark:text-gray-300 mb-6 leading-relaxed">
           Immerse yourself in centuries of art, culture, and history through our cutting-edge virtual museum experience.
         </p>
-        <GradientButtonLink href="/tickets">
+        <GradientButtonLink href="/buy-ticket">
           Start Your Journey
         </GradientButtonLink>
       </GradientCard>

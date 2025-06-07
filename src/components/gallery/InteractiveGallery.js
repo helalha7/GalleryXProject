@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Modal from '../shared/Modal';
 import ArtifactDetail from '../artifact/ArtifactDetail';
@@ -11,11 +11,11 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
   const [selectedArtifact, setSelectedArtifact] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [isLoaded, setIsLoaded] = useState(false);
+  const imageContainerRef = useRef(null);
 
   useEffect(() => {
     function handleResize() {
-      const container = document.getElementById('gallery-container');
+      const container = imageContainerRef.current;
       if (container) {
         setDimensions({
           width: container.clientWidth,
@@ -27,7 +27,7 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isLoaded]);
+  }, []);
 
   const handleArtifactClick = async (artifact) => {
     setSelectedArtifact(artifact);
@@ -46,7 +46,6 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
     }
   };
 
-
   const calculatePosition = (coords, originalWidth = 1000, originalHeight = 600) => {
     const { width, height } = dimensions;
     const widthRatio = width / originalWidth;
@@ -64,29 +63,23 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
     <div className="w-full">
       <div
         id="gallery-container"
-        className="relative w-full max-w-full overflow-hidden border rounded-xl shadow bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-        style={{ height: '500px' }}
+        ref={imageContainerRef}
+        className="relative w-full overflow-hidden border rounded-xl shadow bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
       >
-        {/* Gallery Image */}
+        {/* Responsive Image */}
         <Image
           src={galleryImage}
           alt="Art Gallery"
-          fill
-          className="object-contain"
-          onLoadingComplete={() => setIsLoaded(true)}
+          layout="responsive"
+          width={1000}
+          height={600}
+          className="object-contain w-full h-auto rounded-xl"
           onError={() => console.error(`Failed to load image: ${galleryImage}`)}
           priority
         />
 
-        {/* Loading Fallback */}
-        {!isLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-            <p className="text-gray-600 dark:text-gray-300">Gallery image loading...</p>
-          </div>
-        )}
-
         {/* Artifact Hotspots */}
-        {isLoaded && artifacts.map((artifact, index) => (
+        {artifacts.map((artifact, index) => (
           <div
             key={artifact._id || index}
             className="absolute cursor-pointer transition-all duration-200 rounded-md border-2 border-transparent hover:border-white hover:bg-white/20 dark:hover:bg-white/10"

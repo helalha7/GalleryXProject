@@ -28,9 +28,6 @@ export default function GalleryHighlight({ gallery, index }) {
         <p className="text-[#374151] dark:text-gray-300 mb-6 leading-relaxed">
           {gallery.description}
         </p>
-        <GradientButtonLink href={`/explore/${gallery._id}`}>
-          Explore Gallery
-        </GradientButtonLink>
       </div>
     </GradientCard>
   );
