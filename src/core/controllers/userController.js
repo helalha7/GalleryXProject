@@ -77,15 +77,31 @@ export async function updateUserController(req, { params }) {
   try {
     const updateData = await req.json();
 
+    const { fullName, email, username, role, currentPassword, newPassword } = updateData;
+
+    // Role validation (only allowed values)
     const validRoles = ['visitor', 'admin'];
-    if (updateData.role && !validRoles.includes(updateData.role)) {
+    if (role && !validRoles.includes(role)) {
       return new Response(
         JSON.stringify({ success: false, message: 'Invalid role. Choose either visitor or admin.' }),
         { status: 400 }
       );
     }
 
-    const updatedUser = await updateUserByIdService(params.id, updateData);
+    // Build the data to pass down to the service
+    const safeUpdateData = {
+      ...(fullName && { fullName }),
+      ...(email && { email }),
+      ...(username && { username }),
+    };
+
+    // Include password fields if provided
+    if (currentPassword && newPassword) {
+      safeUpdateData.currentPassword = currentPassword;
+      safeUpdateData.newPassword = newPassword;
+    }
+
+    const updatedUser = await updateUserByIdService(params.id, safeUpdateData);
 
     if (!updatedUser) {
       return new Response(
@@ -100,9 +116,15 @@ export async function updateUserController(req, { params }) {
     );
   } catch (error) {
     console.error('updateUserController Error:', error.message);
+
+    const errorMessage = error.message?.includes('Current password is incorrect')
+      ? 'Current password is incorrect.'
+      : 'Could not update user. Please try again later.';
+
     return new Response(
-      JSON.stringify({ success: false, message: 'Could not update user. Please try again later.' }),
+      JSON.stringify({ success: false, message: errorMessage }),
       { status: 500 }
     );
   }
 }
+

@@ -41,7 +41,6 @@ export async function fetchUserTicket(token) {
   });
 
   const ticket = await handleResponse(res);
-  console.log(ticket)
   return {
     id: ticket._id,
     validUntil: ticket.expiresAt,

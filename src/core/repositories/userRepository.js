@@ -40,3 +40,27 @@ export async function updateUserById(userId, updateData) {
   await connectToDatabase();
   return await User.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
 }
+
+// Full secure update for password and profile fields
+export async function updateUserByIdWithPasswordCheck(userId, updateData) {
+  await connectToDatabase();
+
+  const user = await User.findById(userId);
+  if (!user) return null;
+
+  // Password change logic
+  if (updateData.currentPassword && updateData.newPassword) {
+    const isPasswordCorrect = user.password === `hashed_${updateData.currentPassword}`;
+    if (!isPasswordCorrect) {
+      throw new Error('Current password is incorrect.');
+    }
+    user.password = `hashed_${updateData.newPassword}`;
+  }
+
+  // Other profile updates
+  if (updateData.fullName) user.fullName = updateData.fullName;
+  if (updateData.email) user.email = updateData.email;
+  if (updateData.username) user.username = updateData.username;
+
+  return await user.save();
+}

@@ -4,21 +4,42 @@ import {
     handleCreateArtifact,
 } from '@/core/controllers/artifactController';
 
+import { requireAuth } from '@/core/middleware/requireAuth';
+import { requireValidTicket } from '@/core/middleware/requireValidTicket';
+import { handleGetAllArtifacts } from '@/core/controllers/artifactController';
+
 export async function GET(req) {
-    const { authorized, user, ticket, error, status } = await requireValidTicket(req);
+    // First check if user is authenticated
+    const { authorized, user, error, status } = await requireAuth(req);
 
     if (!authorized) {
         return new Response(JSON.stringify({
             success: false,
-            message: error || 'Access denied. Valid ticket required.',
-        }), { status: status || 403 });
+            message: error || 'Unauthorized',
+        }), { status: status || 401 });
     }
 
-    req.user = user;
-    req.ticket = ticket;
+    // Allow access if user is an admin
+    if (user.role === 'admin') {
+        req.user = user;
+        return await handleGetAllArtifacts(req);
+    }
+
+    // Otherwise, check if user has valid ticket
+    const ticketCheck = await requireValidTicket(req);
+    if (!ticketCheck.authorized) {
+        return new Response(JSON.stringify({
+            success: false,
+            message: ticketCheck.error || 'Access denied. Valid ticket required.',
+        }), { status: ticketCheck.status || 403 });
+    }
+
+    req.user = ticketCheck.user;
+    req.ticket = ticketCheck.ticket;
 
     return await handleGetAllArtifacts(req);
 }
+
 
 export async function POST(req) {
     const { authorized, user, error, status } = await requireAdmin(req);

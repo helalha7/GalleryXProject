@@ -168,10 +168,10 @@ function NavItems({
                 >
                   <div className="py-1 text-sm text-gray-800 dark:text-gray-100">
                     <Link
-                      href="/profile/edit"
+                      href="/my-info"
                       className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                      Edit Profile
+                      My Info
                     </Link>
                     <Link
                       href="/my-ticket"
@@ -191,8 +191,8 @@ function NavItems({
             </div>
           ) : (
             <>
-              <Link href="/profile/edit" className={linkClasses(false)}>
-                Edit Profile
+              <Link href="/my-info" className={linkClasses(false)}>
+                My Info
               </Link>
               <Link href="/my-ticket" className={linkClasses(false)}>
                 My Ticket Info

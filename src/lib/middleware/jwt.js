@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 export function generateToken(user) {
   return jwt.sign(
     {
-      id: user._id,
+      id: user._id.toString(),
       role: user.role,
     },
     JWT_SECRET,
