@@ -3,9 +3,9 @@ import {
   updateUserController,
 } from '@/core/controllers/userController';
 
-import { requireAdmin } from '@/lib/middleware/auth';
-import { requireAuth } from '@/lib/middleware/auth';
+import { requireAdmin, requireAuth } from '@/lib/middleware/auth';
 
+// DELETE - Admins only
 export async function DELETE(req, context) {
   const { authorized, error, status } = await requireAdmin(req);
 
@@ -19,8 +19,9 @@ export async function DELETE(req, context) {
   return await deleteUserController(req, context);
 }
 
+// PUT - Update profile (self or admin)
 export async function PUT(req, contextPromise) {
-  const context = await contextPromise; // ✅ await context
+  const context = await contextPromise;
   const { user, authorized, error, status } = await requireAuth(req);
 
   if (!authorized) {
@@ -42,7 +43,14 @@ export async function PUT(req, contextPromise) {
     }), { status: 403 });
   }
 
-  return await updateUserController(req, context);
+  // ✅ Continue to update
+  try {
+    return await updateUserController(req, context);
+  } catch (err) {
+    console.error('Update failed:', err);
+    return new Response(JSON.stringify({
+      success: false,
+      message: 'Server error while updating user.',
+    }), { status: 500 });
+  }
 }
-
-

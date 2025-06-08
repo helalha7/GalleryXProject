@@ -1,8 +1,8 @@
-
 export function saveUserSession(user, token) {
     if (typeof window !== 'undefined') {
-        sessionStorage.setItem('user', JSON.stringify(user));
-        sessionStorage.setItem('token', token);
+        // Store the token inside the user object
+        const userWithToken = { ...user, token };
+        sessionStorage.setItem('user', JSON.stringify(userWithToken));
     }
 }
 
@@ -14,6 +14,8 @@ export function getUserFromSession() {
     return null;
 }
 
+// You no longer need getTokenFromSession if you use the new structure,
+// but you can keep it for other uses if needed.
 export function getTokenFromSession() {
     if (typeof window !== 'undefined') {
         return sessionStorage.getItem('token');
@@ -32,10 +34,9 @@ export function updateUserTicketInSession(ticket) {
     }
 }
 
-
 export function clearSession() {
     if (typeof window !== 'undefined') {
         sessionStorage.removeItem('user');
-        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('token'); // still safe to clear in case old version saved it
     }
 }

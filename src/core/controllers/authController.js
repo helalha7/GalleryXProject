@@ -59,8 +59,17 @@ export async function loginController(req) {
 
     const token = generateToken(user);
 
+    // ✅ Format to match what the frontend expects
     return new Response(
-      JSON.stringify({ success: true, data: { user, token } }),
+      JSON.stringify({
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          token: token,
+        }
+      }),
       {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -74,3 +83,5 @@ export async function loginController(req) {
     );
   }
 }
+
+
