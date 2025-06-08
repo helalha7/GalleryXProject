@@ -1,12 +1,9 @@
-import { requireAdmin, requireValidTicket } from '@/lib/middleware/auth';
+import { requireAuth ,requireAdmin, requireValidTicket } from '@/lib/middleware/auth';
 import {
     handleGetAllArtifacts,
     handleCreateArtifact,
 } from '@/core/controllers/artifactController';
 
-import { requireAuth } from '@/core/middleware/requireAuth';
-import { requireValidTicket } from '@/core/middleware/requireValidTicket';
-import { handleGetAllArtifacts } from '@/core/controllers/artifactController';
 
 export async function GET(req) {
     // First check if user is authenticated
