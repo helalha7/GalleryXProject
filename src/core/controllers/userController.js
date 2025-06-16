@@ -93,7 +93,9 @@ export async function updateUserController(req, { params }) {
       ...(fullName && { fullName }),
       ...(email && { email }),
       ...(username && { username }),
+      ...(role && { role }), // ← ADD THIS LINE
     };
+
 
     // Include password fields if provided
     if (currentPassword && newPassword) {
