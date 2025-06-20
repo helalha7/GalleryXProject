@@ -30,7 +30,7 @@ export default function AdminLayout({ children }) {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-1 overflow-auto bg-black dark:bg-gray-200">
+      <div className="flex-1 overflow-auto bg-[#f9fafb] dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 text-[#111827] dark:text-white">
         {children}
       </div>
     </div>
