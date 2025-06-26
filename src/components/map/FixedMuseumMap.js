@@ -1,12 +1,26 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { fetchAllGalleries } from '@/lib/api/gallery';
+
 import GalleryCard from './GalleryCard';
-import GALLERIES from '@/data/galleries';
 import GradientCard from '../shared/GradientCard';
+import LoadingSpinner from '../shared/LoadingSpinner';
 
 export default function FixedMuseumMap({ onGallerySelect }) {
   const router = useRouter();
+  const [galleries, setGalleries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAllGalleries()
+      .then(setGalleries)
+      .catch((err) => {
+        console.error('Error fetching galleries:', err.message);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleGalleryClick = (gallery) => {
     if (onGallerySelect) {
@@ -28,13 +42,15 @@ export default function FixedMuseumMap({ onGallerySelect }) {
     }
   };
 
+  if (loading) return <LoadingSpinner message="Loading museum map..." />;
+
   return (
     <GradientCard
       hover={false}
       className="p-8 sm:p-12 lg:p-16 max-w-6xl mx-auto mt-12"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {GALLERIES.map((gallery) => (
+        {galleries.map((gallery) => (
           <GalleryCard
             key={gallery._id}
             gallery={gallery}
@@ -44,5 +60,4 @@ export default function FixedMuseumMap({ onGallerySelect }) {
       </div>
     </GradientCard>
   );
-
 }

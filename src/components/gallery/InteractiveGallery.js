@@ -19,7 +19,7 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
       if (container) {
         setDimensions({
           width: container.clientWidth,
-          height: container.clientHeight
+          height: container.clientHeight,
         });
       }
     }
@@ -39,7 +39,7 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
     try {
       if (artifact?.name && token && !sessionStorage.getItem(viewedKey)) {
         await incrementArtifactViewsByName(artifact.name, token);
-        sessionStorage.setItem(viewedKey, 'true'); // 🧠 Mark as viewed
+        sessionStorage.setItem(viewedKey, 'true');
       }
     } catch (err) {
       console.error('Failed to increment artifact views:', err.message);
@@ -55,7 +55,7 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
       left: `${coords.x * widthRatio}px`,
       top: `${coords.y * heightRatio}px`,
       width: `${coords.width * widthRatio}px`,
-      height: `${coords.height * heightRatio}px`
+      height: `${coords.height * heightRatio}px`,
     };
   };
 
@@ -64,21 +64,17 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
       <div
         id="gallery-container"
         ref={imageContainerRef}
-        className="relative w-full overflow-hidden border rounded-xl shadow bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+        className="relative w-full pt-[60%] overflow-hidden border rounded-xl shadow bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
       >
-        {/* Responsive Image */}
         <Image
           src={galleryImage}
           alt="Art Gallery"
-          layout="responsive"
-          width={1000}
-          height={600}
-          className="object-contain w-full h-auto rounded-xl"
+          fill
+          className="object-contain"
           onError={() => console.error(`Failed to load image: ${galleryImage}`)}
           priority
         />
 
-        {/* Artifact Hotspots */}
         {artifacts.map((artifact, index) => (
           <div
             key={artifact._id || index}
@@ -87,18 +83,15 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
             onClick={() => handleArtifactClick(artifact)}
             title={artifact.name}
           >
-            {/* Optional visual cue */}
             <div className="absolute bottom-2 right-2 w-3 h-3 bg-white rounded-full opacity-0 hover:opacity-70 transition-opacity" />
           </div>
         ))}
       </div>
 
-      {/* Info text */}
       <div className="mt-4 text-center text-gray-600 dark:text-gray-300">
         <p>Click on any artifact in the gallery to view details</p>
       </div>
 
-      {/* Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

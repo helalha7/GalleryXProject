@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import GALLERIES from '@/data/galleries';
+import { fetchAllGalleries } from '@/lib/api/gallery';
+
 import GalleryListSection from '@/components/explore/GalleryListSection';
 import MuseumMapSection from '@/components/explore/MuseumMapSection';
 import CallToAction from '@/components/explore/CallToAction';
@@ -11,30 +13,29 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function ExplorePage() {
   const router = useRouter();
-  const { hasValidTicket, loading } = useRequireTicket();
+  const { hasValidTicket, loading: ticketLoading } = useRequireTicket();
+
+  const [galleries, setGalleries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAllGalleries()
+      .then(setGalleries)
+      .catch((err) => {
+        console.error('Failed to load galleries:', err.message);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleGallerySelect = (gallery) => {
+    if (!gallery?._id) return;
 
-    const galleryId = gallery?._id || 'unknown-gallery';
-    switch (galleryId) {
-      case 'gallery-a':
-        router.push('/explore/gallery/egyptian-gallery');
-        break;
-      case 'roman-gallery':
-        router.push('/explore/gallery/roman-gallery');
-        break;
-      case 'mona-lisa-gallery':
-        router.push('/explore/gallery/mona-lisa-gallery');
-        break;
-      default:
-        router.push(`/explore/gallery/${galleryId}`);
-    }
+    router.push(`/explore/gallery/${gallery._id}`);
   };
 
-  if (loading) {
-    return (
-     <LoadingSpinner message = {'checking ticket status ...'}/>
-    );
+
+  if (loading || ticketLoading) {
+    return <LoadingSpinner message="Loading explore page..." />;
   }
 
   return (
@@ -42,7 +43,7 @@ export default function ExplorePage() {
       {!hasValidTicket && <TicketBanner />}
       <MuseumMapSection hasTicket={hasValidTicket} onGallerySelect={handleGallerySelect} />
       <GalleryListSection
-        galleries={GALLERIES}
+        galleries={galleries}
         hasTicket={hasValidTicket}
         onGallerySelect={handleGallerySelect}
       />
