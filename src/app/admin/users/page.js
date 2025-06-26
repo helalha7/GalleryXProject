@@ -81,69 +81,64 @@ export default function AdminUsersPage() {
   const handleUpdate = async () => {
     try {
       const updated = await updateUser(editUser._id, formData, token);
-      setUsers((prev) =>
-        prev.map((u) => (u._id === updated._id ? updated : u))
-      );
+      setUsers((prev) => prev.map((u) => (u._id === updated._id ? updated : u)));
       setEditUser(null);
     } catch (err) {
       alert(`Update failed: ${err.message}`);
     }
   };
 
-  if (loading) return <p className="p-6 text-gray-500">Loading users...</p>;
-  if (error) return <p className="p-6 text-red-600">Error: {error}</p>;
+  if (loading) return <p className="p-6 text-gray-500 dark:text-gray-300">Loading users...</p>;
+  if (error) return <p className="p-6 text-red-600 dark:text-red-400">Error: {error}</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4 text-black">All Users</h1>
+    <div className="p-6 bg-[#f9fafb] dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900 min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-[#111827] dark:text-white">All Users</h1>
 
-      {/* Search */}
-      <div className="mb-4 flex space-x-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         <input
           type="text"
           value={searchTerm}
           placeholder="Search by username..."
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded text-black"
+          className="px-4 py-2 border border-gray-300 rounded text-[#111827] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
         <button
           onClick={handleSearch}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-700 hover:to-cyan-500 text-white px-4 py-2 rounded"
         >
           Search
         </button>
         <button
           onClick={resetList}
-          className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+          className="bg-gray-300 text-[#111827] px-4 py-2 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
         >
           Reset
         </button>
       </div>
 
-      {/* User Table */}
-      <table className="min-w-full border border-gray-300">
-        <thead className="bg-gray-100">
+      <table className="min-w-full border border-gray-300 dark:border-gray-600/30 bg-white dark:bg-gray-800">
+        <thead className="bg-gray-100 dark:bg-gray-700">
           <tr>
-            <th className="text-left p-2 text-black">Full Name</th>
-            <th className="text-left p-2 text-black">Email</th>
-            <th className="text-left p-2 text-black">Username</th>
-            <th className="text-left p-2 text-black">Role</th>
-            <th className="text-left p-2 text-black">Actions</th>
+            <th className="text-left p-2 text-[#111827] dark:text-gray-300">Full Name</th>
+            <th className="text-left p-2 text-[#111827] dark:text-gray-300">Email</th>
+            <th className="text-left p-2 text-[#111827] dark:text-gray-300">Username</th>
+            <th className="text-left p-2 text-[#111827] dark:text-gray-300">Role</th>
+            <th className="text-left p-2 text-[#111827] dark:text-gray-300">Actions</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user._id} className="border-t">
-              <td className="p-2 text-black">{user.fullName}</td>
-              <td className="p-2 text-black">{user.email}</td>
-              <td className="p-2 text-black">{user.username}</td>
+            <tr key={user._id} className="border-t border-gray-200 dark:border-gray-600/30">
+              <td className="p-2 text-[#111827] dark:text-white">{user.fullName}</td>
+              <td className="p-2 text-[#111827] dark:text-white">{user.email}</td>
+              <td className="p-2 text-[#111827] dark:text-white">{user.username}</td>
               <td className="p-2">
                 <span
-                  className={`px-2 py-1 rounded-full text-sm font-medium ${
-                    user.role === 'admin'
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-gray-100 text-gray-700'
-                  }`}
+                  className={`px-2 py-1 rounded-full text-sm font-medium ${user.role === 'admin'
+                      ? 'bg-red-100 text-red-700 dark:bg-red-400/10 dark:text-red-300'
+                      : 'bg-gray-100 text-gray-700 dark:bg-blue-500/10 dark:text-blue-300'
+                    }`}
                 >
                   {user.role}
                 </span>
@@ -151,13 +146,13 @@ export default function AdminUsersPage() {
               <td className="p-2 space-x-2">
                 <button
                   onClick={() => openEditModal(user)}
-                  className="text-blue-600 hover:underline"
+                  className="text-blue-600 hover:underline dark:text-blue-400"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(user._id)}
-                  className="text-red-600 hover:underline"
+                  className="text-red-600 hover:underline dark:text-red-400"
                 >
                   Delete
                 </button>
@@ -167,10 +162,9 @@ export default function AdminUsersPage() {
         </tbody>
       </table>
 
-      {/* Edit Modal */}
       {editUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-[400px] text-black">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gradient-to-b dark:from-gray-700/50 dark:to-gray-800/50 p-6 rounded shadow-lg w-[400px] text-[#111827] dark:text-white">
             <h2 className="text-xl font-bold mb-4">Edit User</h2>
             <div className="mb-2">
               <label className="block text-sm font-medium">Full Name</label>
@@ -179,7 +173,7 @@ export default function AdminUsersPage() {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleFormChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
+                className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded mt-1 dark:bg-gray-700 dark:text-white"
               />
             </div>
             <div className="mb-2">
@@ -189,7 +183,7 @@ export default function AdminUsersPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleFormChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
+                className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded mt-1 dark:bg-gray-700 dark:text-white"
               />
             </div>
             <div className="mb-4">
@@ -198,7 +192,7 @@ export default function AdminUsersPage() {
                 name="role"
                 value={formData.role}
                 onChange={handleFormChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
+                className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded mt-1 dark:bg-gray-700 dark:text-white"
               >
                 <option value="visitor">Visitor</option>
                 <option value="admin">Admin</option>
@@ -207,13 +201,13 @@ export default function AdminUsersPage() {
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setEditUser(null)}
-                className="px-4 py-2 bg-gray-300 text-black rounded"
+                className="px-4 py-2 bg-gray-300 text-[#111827] rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-400 hover:from-blue-700 hover:to-cyan-500 text-white rounded"
               >
                 Save
               </button>

@@ -9,6 +9,7 @@ export default function Sidebar() {
   const navItems = [
     { name: 'View Users', href: '/admin/users', icon: 'staff' },
     { name: 'View Graph', href: '/admin/views', icon: 'chart' },
+    { name: 'View Artifacts', href: '/admin/artifacts', icon: 'artifact' }, // ✅ new item
   ];
 
   const icons = {
@@ -28,6 +29,12 @@ export default function Sidebar() {
         <rect x="17" y="5" width="3" height="13" />
       </svg>
     ),
+    artifact: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+      </svg>
+    ),
   };
 
   const handleLogout = () => {
@@ -36,35 +43,37 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="bg-white text-black w-64 min-h-screen p-4">
+    <aside className="w-64 min-h-screen p-4 bg-white text-[#111827] dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900 dark:text-white flex flex-col">
       <div className="mb-8">
-        <h2 className="text-xl font-display font-bold">GalleryX Admin</h2>
+        <h2 className="text-xl font-bold tracking-tight">GalleryX Admin</h2>
       </div>
 
-      <nav>
+      <nav className="flex-1">
         <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.name}>
-              <Link
-                href={item.href}
-                className={`flex items-center space-x-3 p-3 rounded-lg ${
-                  pathname === item.href
-                    ? 'bg-gray-200 text-black'
-                    : 'text-black hover:bg-gray-100 hover:text-gray-600'
-                } transition-colors`}
-              >
-                <span className="text-black">{icons[item.icon]}</span>
-                <span>{item.name}</span>
-              </Link>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <li key={item.name}>
+                <Link
+                  href={item.href}
+                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${isActive
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-400 text-white shadow-md dark:from-blue-600 dark:to-cyan-400'
+                      : 'text-[#111827] hover:bg-gray-100 hover:text-gray-600 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:hover:text-white'
+                    }`}
+                >
+                  <span>{icons[item.icon]}</span>
+                  <span>{item.name}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
-      <div className="mt-auto pt-8">
+      <div className="pt-4 mt-auto">
         <button
           onClick={handleLogout}
-          className="flex items-center space-x-3 p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors w-full"
+          className="flex items-center space-x-3 p-3 w-full bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white rounded-lg transition-all"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
