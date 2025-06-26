@@ -70,7 +70,7 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
           src={galleryImage}
           alt="Art Gallery"
           fill
-          className="object-contain"
+          className="object-fill"
           onError={() => console.error(`Failed to load image: ${galleryImage}`)}
           priority
         />

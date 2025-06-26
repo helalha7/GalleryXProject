@@ -17,53 +17,51 @@ export default function GalleryCard({ gallery, onClick }) {
       onBlur={() => setIsHovered(false)}
       className={`
         relative
-        rounded-xl
+        rounded-lg
         overflow-hidden
         cursor-pointer
-        shadow-lg
+        shadow-md
         flex flex-col items-center justify-center
         text-center
-        p-8
+        p-2
         transition
         duration-300
         transform
-        hover:scale-[1.04]
+        hover:scale-[1.03]
         focus:outline-none
-        focus:ring-4
-        focus:ring-offset-2
-        focus:ring-blue-500
-        border-2 border-gray-700
+        focus:ring-2
+        focus:ring-offset-1
+        focus:ring-blue-400
+        w-full h-full
+        border border-gray-600
         bg-cover bg-center
-        min-h-[250px]
       `}
       style={{
         backgroundImage: `url(${gallery.image})`,
       }}
     >
-      {/* Theme-aware overlay */}
       <div className="absolute inset-0 z-0 bg-white/70 dark:bg-black/60 transition-colors duration-300" />
 
-      {/* Content */}
       <div className="relative z-10">
-        <h3 className="font-display font-semibold mb-3 text-lg sm:text-xl text-[#111827] dark:text-white">
+        <h3 className="font-display font-semibold mb-1 text-xs sm:text-sm text-[#111827] dark:text-white">
           {gallery.name}
         </h3>
 
         {isHovered ? (
           <>
-            <p className="text-sm sm:text-base mb-4 text-[#374151] dark:text-gray-300">
+            <p className="text-[10px] sm:text-xs mb-1 text-[#374151] dark:text-gray-300">
               {gallery.description}
             </p>
             <button
-              className="px-6 py-2 rounded-full font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-500 shadow-lg hover:from-cyan-500 hover:to-blue-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-cyan-400"
+              className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-500 shadow hover:from-cyan-500 hover:to-blue-600 transition-colors duration-300"
               aria-label={`Enter ${gallery.name}`}
               type="button"
             >
-              Enter Gallery
+              Enter
             </button>
           </>
         ) : (
-          <p className="italic text-sm text-[#374151] dark:text-gray-300 select-none pointer-events-none">
+          <p className="italic text-[10px] text-[#374151] dark:text-gray-300 select-none pointer-events-none">
             Click to explore
           </p>
         )}
