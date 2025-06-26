@@ -58,39 +58,52 @@ export async function requireAdmin(req) {
 // --- requireValidTicket ---
 export async function requireValidTicket(req) {
   const authResult = await requireAuth(req);
-
-  if (!authResult.authorized) {
-    return authResult;
-  }
+  if (!authResult.authorized) return authResult;
 
   const { user } = authResult;
 
-  await connectToDatabase();
-  const dbUser = await User.findById(user.id).populate('ticket');
+  try {
+    await connectToDatabase();
+    const dbUser = await User.findById(user.id).populate('ticket');
 
-  if (!dbUser || !dbUser.ticket) {
+    if (!dbUser) {
+      return {
+        authorized: false,
+        error: 'User not found.',
+        status: 403,
+      };
+    }
+
+    if (!dbUser.ticket) {
+      return {
+        authorized: false,
+        error: 'No ticket associated with user.',
+        status: 403,
+      };
+    }
+
+    const now = new Date();
+    const validUntil = new Date(dbUser.ticket.validUntil);
+
+    if (isNaN(validUntil.getTime()) || validUntil < now) {
+      return {
+        authorized: false,
+        error: 'Ticket has expired or is invalid.',
+        status: 403,
+      };
+    }
+
+    return {
+      authorized: true,
+      user,
+      ticket: dbUser.ticket,
+    };
+  } catch (error) {
+    console.error('Error in requireValidTicket:', error);
     return {
       authorized: false,
-      error: 'No ticket associated with user.',
-      status: 403,
+      error: 'Internal server error while validating ticket.',
+      status: 500,
     };
   }
-
-  const now = new Date();
-  const validUntil = new Date(dbUser.ticket.validUntil);
-
-  if (validUntil < now) {
-    return {
-      authorized: false,
-      error: 'Ticket has expired.',
-      status: 403,
-    };
-  }
-
-  return {
-    authorized: true,
-    user,
-    ticket: dbUser.ticket,
-  };
 }
-
