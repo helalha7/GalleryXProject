@@ -9,7 +9,7 @@ export default function Sidebar() {
   const navItems = [
     { name: 'View Users', href: '/admin/users', icon: 'staff' },
     { name: 'View Graph', href: '/admin/views', icon: 'chart' },
-    { name: 'View Artifacts', href: '/admin/artifacts', icon: 'artifact' }, // ✅ new item
+    { name: 'manage Galleries', href: '/admin/gallery', icon: 'artifact' }, // ✅ new item
   ];
 
   const icons = {
