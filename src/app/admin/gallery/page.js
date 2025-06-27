@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchAllGalleries, createGallery, deleteGallery } from "@/lib/api/gallery";
 import { Trash, X } from "lucide-react";
+import FileUploader from "@/components/admin/FileUploader";
 
 export default function AdminArtifactsPage() {
     const [galleries, setGalleries] = useState([]);
@@ -16,13 +17,8 @@ export default function AdminArtifactsPage() {
         description: "",
         image: "",
         mapImage: "",
-        position: "",
     });
     const [submitting, setSubmitting] = useState(false);
-    const [imagePreview, setImagePreview] = useState(null);
-    const [mapImagePreview, setMapImagePreview] = useState(null);
-    const [uploadingImage, setUploadingImage] = useState(false);
-    const [uploadingMapImage, setUploadingMapImage] = useState(false);
 
     const token = typeof window !== "undefined" ? sessionStorage.getItem("token") : null;
 
@@ -51,44 +47,11 @@ export default function AdminArtifactsPage() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleFileUpload = async (file, fieldName) => {
-        if (!file || !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
-            setError("Invalid file. Must be image and < 5MB.");
-            return;
-        }
-
-        const setUploading = fieldName === "image" ? setUploadingImage : setUploadingMapImage;
-        const setPreview = fieldName === "image" ? setImagePreview : setMapImagePreview;
-        setUploading(true);
-
-        try {
-            const form = new FormData();
-            form.append("file", file);
-
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
-                body: form,
-            });
-
-            if (!res.ok) throw new Error("Upload failed");
-            const result = await res.json();
-            const imagePath = result.path || result.url;
-
-            setFormData((prev) => ({ ...prev, [fieldName]: imagePath }));
-            setPreview(URL.createObjectURL(file));
-        } catch (err) {
-            setError(`Upload failed: ${err.message}`);
-        } finally {
-            setUploading(false);
-        }
-    };
-
     const handleAddGallery = async (e) => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const created = await createGallery(formData, token);
+            const created = await createGallery({ ...formData}, token);
             setGalleries((prev) => [...prev, created]);
             setShowAddForm(false);
             resetForm();
@@ -111,61 +74,7 @@ export default function AdminArtifactsPage() {
 
     const resetForm = () => {
         setFormData({ name: "", description: "", image: "", mapImage: "", position: "" });
-        setImagePreview(null);
-        setMapImagePreview(null);
     };
-
-    const ImageUploadField = ({ label, fieldName, preview, uploading, required = false }) => (
-        <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                {label} {required && "*"}
-            </label>
-            <div className="space-y-3">
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileUpload(e.target.files[0], fieldName)}
-                    className="hidden"
-                    id={`${fieldName}-upload`}
-                    disabled={uploading}
-                />
-                <label
-                    htmlFor={`${fieldName}-upload`}
-                    className="cursor-pointer border-2 border-dashed p-3 rounded text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400"
-                >
-                    {uploading ? "Uploading..." : "Click to upload or drag file"}
-                </label>
-                {preview && (
-                    <div className="relative w-full h-32 rounded-lg overflow-hidden border">
-                        <Image src={preview} alt="Preview" fill className="object-cover" />
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (fieldName === "image") {
-                                    setImagePreview(null);
-                                    setFormData((prev) => ({ ...prev, image: "" }));
-                                } else {
-                                    setMapImagePreview(null);
-                                    setFormData((prev) => ({ ...prev, mapImage: "" }));
-                                }
-                            }}
-                            className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full"
-                        >
-                            <X size={16} />
-                        </button>
-                    </div>
-                )}
-                <input
-                    type="text"
-                    name={fieldName}
-                    value={formData[fieldName]}
-                    onChange={handleInputChange}
-                    placeholder={`Enter ${label.toLowerCase()} URL manually`}
-                    className="w-full border rounded px-2 py-1 text-sm dark:bg-gray-700 dark:text-white"
-                />
-            </div>
-        </div>
-    );
 
     if (loading) return <p className="p-6 text-gray-500 dark:text-gray-300">Loading...</p>;
     if (error) return <p className="p-6 text-red-600 dark:text-red-400">Error: {error}</p>;
@@ -259,8 +168,8 @@ export default function AdminArtifactsPage() {
                                 />
                             </div>
 
-                            <ImageUploadField label="Gallery Image" fieldName="image" preview={imagePreview} uploading={uploadingImage} required />
-                            <ImageUploadField label="Map Image" fieldName="mapImage" preview={mapImagePreview} uploading={uploadingMapImage} required />
+                            <FileUploader label="Gallery Image" onUpload={(url) => setFormData((prev) => ({ ...prev, image: url }))} />
+                            <FileUploader label="Map Image" onUpload={(url) => setFormData((prev) => ({ ...prev, mapImage: url }))} />
 
                             <div className="flex justify-end space-x-3 pt-4">
                                 <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 border rounded text-gray-700 dark:text-white">Cancel</button>
