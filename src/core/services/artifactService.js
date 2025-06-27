@@ -3,6 +3,8 @@ import {
     getAllArtifacts,
     getArtifactsByGallery,
     incrementArtifactViewsByName,
+    editArtifact,
+    deleteArtifact,
 } from '@/core/repositories/artifactRepository';
 
 export async function createArtifactService(data) {
@@ -19,4 +21,12 @@ export async function getArtifactsByGalleryService(galleryName) {
 
 export async function incrementViewsService(artifactName) {
     return await incrementArtifactViewsByName(artifactName);
+}
+
+export async function editArtifactService(id, data) {
+    return await editArtifact(id, data);
+}
+
+export async function deleteArtifactService(id) {
+    return await deleteArtifact(id);
 }

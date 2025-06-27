@@ -61,3 +61,24 @@ export async function createArtifact(data, token) {
 
     return await handleResponse(res);
 }
+
+// ✅ Update an existing artifact by ID (admin only)
+export async function updateArtifact(id, data, token) {
+    const res = await fetch(`${BASE_URL}/${id}`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify(data),
+    });
+
+    return await handleResponse(res);
+}
+
+// ✅ Delete an artifact by ID (admin only)
+export async function deleteArtifact(id, token) {
+    const res = await fetch(`${BASE_URL}/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(token),
+    });
+
+    return await handleResponse(res);
+}

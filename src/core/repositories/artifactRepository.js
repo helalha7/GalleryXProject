@@ -27,7 +27,6 @@ export async function getAllArtifacts() {
     return await Artifact.find();
 }
 
-
 // ✅ Get artifacts by gallery
 export async function getArtifactsByGallery(galleryName) {
     await connectToDatabase();
@@ -51,3 +50,31 @@ export async function incrementArtifactViewsByName(name) {
     return updated;
 }
 
+// ✅ Edit an artifact by ID
+export async function editArtifact(id, updatedData) {
+    await connectToDatabase();
+
+    const updated = await Artifact.findByIdAndUpdate(id, updatedData, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!updated) {
+        throw new Error('Artifact not found for update');
+    }
+
+    return updated;
+}
+
+// ✅ Delete an artifact by ID
+export async function deleteArtifact(id) {
+    await connectToDatabase();
+
+    const deleted = await Artifact.findByIdAndDelete(id);
+
+    if (!deleted) {
+        throw new Error('Artifact not found for deletion');
+    }
+
+    return deleted;
+}
