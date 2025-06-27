@@ -5,6 +5,7 @@ import {
     incrementArtifactViewsByName,
     editArtifact,
     deleteArtifact,
+    getGalleryViewsSummary, // ✅ newly added
 } from '@/core/repositories/artifactRepository';
 
 export async function createArtifactService(data) {
@@ -29,4 +30,9 @@ export async function editArtifactService(id, data) {
 
 export async function deleteArtifactService(id) {
     return await deleteArtifact(id);
+}
+
+// ✅ new service for chart (views grouped by gallery)
+export async function getGalleryViewsSummaryService() {
+    return await getGalleryViewsSummary();
 }

@@ -2,43 +2,36 @@
 
 import { useEffect, useState } from 'react';
 import ArtifactViewsChart from '@/components/admin/visitor-analytics/ArtifactViewsChart';
-import { fetchAllArtifacts } from '@/lib/api/artifact';
-import { getTokenFromSession } from '@/utils/sessionStorageHandler';
 
 export default function AdminViewsPage() {
   const [data, setData] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const token = getTokenFromSession();
+    async function fetchGalleryViews() {
+      try {
+        const res = await fetch('/api/stats/gallery-views');
+        if (!res.ok) throw new Error('Failed to fetch gallery views');
 
-    if (!token) {
-      setError('Token missing in user object');
-      return;
-    }
-
-    fetchAllArtifacts(token)
-      .then((artifacts) => {
-        if (!artifacts || artifacts.length === 0) {
-          setError('No artifacts returned from API');
+        const data = await res.json();
+        if (!data || data.length === 0) {
+          setError('No gallery view data found.');
+          return;
         }
 
-        const chartData = artifacts.map(({ name, views }) => ({
-          name,
-          views: typeof views === 'number' ? views : 0,
-        }));
-
-        setData(chartData);
-      })
-      .catch((err) => {
-        console.error('Failed to fetch artifact views:', err.message);
+        setData(data);
+      } catch (err) {
+        console.error('Error:', err.message);
         setError(err.message);
-      });
+      }
+    }
+
+    fetchGalleryViews();
   }, []);
 
   return (
     <div className="p-6 min-h-screen bg-[#f9fafb] dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900">
-      <h1 className="text-2xl font-bold mb-6 text-[#111827] dark:text-white">Artifact Views Graph</h1>
+      <h1 className="text-2xl font-bold mb-6 text-[#111827] dark:text-white">Gallery Views Graph</h1>
 
       {error && (
         <p className="text-red-600 dark:text-red-400 font-semibold mb-4">⚠️ {error}</p>

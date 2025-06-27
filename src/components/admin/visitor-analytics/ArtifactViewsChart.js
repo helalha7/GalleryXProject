@@ -11,17 +11,41 @@ import {
   Legend
 } from 'recharts';
 
+// 🔹 Custom Tooltip component
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+
+    return (
+      <div className="bg-white p-3 rounded shadow text-sm text-gray-800 max-w-xs">
+        <p className="font-semibold mb-2">{data.gallery}</p>
+        {data.artifacts && data.artifacts.length > 0 ? (
+          data.artifacts.map((artifact, idx) => (
+            <p key={idx}>
+              {artifact.name}: {artifact.views} views
+            </p>
+          ))
+        ) : (
+          <p className="italic text-gray-500">No artifacts</p>
+        )}
+      </div>
+    );
+  }
+
+  return null;
+};
+
 export default function ArtifactViewsChart({ data }) {
-  // Optional: Shorten long names if needed
+  // Format gallery names if too long
   const formattedData = data.map(d => ({
     ...d,
-    shortName: d.name.length > 20 ? d.name.split(' ').slice(0, 3).join(' ') + '…' : d.name
+    shortName: d.gallery.length > 20 ? d.gallery.slice(0, 20) + '…' : d.gallery
   }));
 
   return (
     <div className="w-full h-[28rem] bg-white shadow-xl rounded-2xl p-6">
       <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">
-        Artifact Views Overview
+        Gallery Views Overview
       </h2>
 
       <ResponsiveContainer width="100%" height="100%">
@@ -39,10 +63,7 @@ export default function ArtifactViewsChart({ data }) {
             tick={{ fontSize: 12 }}
           />
           <YAxis tick={{ fontSize: 12 }} />
-          <Tooltip
-            contentStyle={{ fontSize: '14px', borderRadius: '8px' }}
-            cursor={{ fill: '#f0f0f0' }}
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Bar dataKey="views" fill="#4f46e5" radius={[4, 4, 0, 0]} />
         </BarChart>
