@@ -33,22 +33,28 @@ export async function getArtifactsByGallery(galleryName) {
     return await Artifact.find({ gallery: galleryName });
 }
 
-// ✅ Increment views by artifact name
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export async function incrementArtifactViewsByName(name) {
     await connectToDatabase();
 
+    const escapedName = escapeRegex(name);
+
     const updated = await Artifact.findOneAndUpdate(
-        { name },
+        { name: { $regex: `^${escapedName}$`, $options: 'i' } }, // exact case-insensitive match
         { $inc: { views: 1 } },
         { new: true }
     );
 
     if (!updated) {
-        throw new Error('Artifact not found');
+        throw new Error(`Artifact "${name}" not found`);
     }
 
     return updated;
 }
+
 
 // ✅ Edit an artifact by ID
 export async function editArtifact(id, updatedData) {

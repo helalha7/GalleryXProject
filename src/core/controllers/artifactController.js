@@ -7,9 +7,14 @@ import {
     deleteArtifactService,
 } from '@/core/services/artifactService';
 
+/**
+ * Create a new artifact (POST /api/artifact)
+ */
 export async function handleCreateArtifact(req) {
     try {
-        const newArtifact = await createArtifactService(req.body);
+        const body = typeof req.json === 'function' ? await req.json() : req.body;
+
+        const newArtifact = await createArtifactService(body);
 
         return new Response(JSON.stringify({
             success: true,
@@ -24,6 +29,9 @@ export async function handleCreateArtifact(req) {
     }
 }
 
+/**
+ * Get all artifacts (GET /api/artifact)
+ */
 export async function handleGetAllArtifacts() {
     try {
         const artifacts = await getAllArtifactsService();
@@ -32,7 +40,6 @@ export async function handleGetAllArtifacts() {
             success: true,
             data: artifacts,
         }), { status: 200 });
-
     } catch (err) {
         return new Response(JSON.stringify({
             success: false,
@@ -41,9 +48,14 @@ export async function handleGetAllArtifacts() {
     }
 }
 
+/**
+ * Get artifacts by gallery name (GET /api/artifact/gallery?gallery=NAME)
+ */
 export async function handleGetArtifactsByGallery(req) {
     try {
-        const { gallery } = req.query;
+        const rawGallery = req.query?.gallery;
+        if (!rawGallery) throw new Error('Missing gallery parameter');
+        const gallery = rawGallery.toUpperCase();
 
         const artifacts = await getArtifactsByGalleryService(gallery);
 
@@ -51,18 +63,24 @@ export async function handleGetArtifactsByGallery(req) {
             success: true,
             data: artifacts,
         }), { status: 200 });
-
     } catch (err) {
         return new Response(JSON.stringify({
             success: false,
-            message: err.message || 'Gallery not found or invalid.',
-        }), { status: 404 });
+            message: err.message || 'Failed to fetch artifacts.',
+        }), { status: 400 });
     }
 }
 
+/**
+ * Increment views (PATCH /api/artifact/views?name=ArtifactName)
+ */
 export async function handleIncrementArtifactViews(req) {
     try {
-        const { name } = req.query;
+        const name = req.query?.name;
+
+        if (!name) {
+            throw new Error('Missing artifact name');
+        }
 
         const updated = await incrementViewsService(name);
 
@@ -79,15 +97,19 @@ export async function handleIncrementArtifactViews(req) {
     }
 }
 
+
+/**
+ * Update artifact (PATCH /api/artifact/:id)
+ */
 export async function handleUpdateArtifact(req, { params }) {
     try {
-        const updated = await editArtifactService(params.id, req.body);
+        const body = await req.json(); // ✅ Required in App Router
+        const updated = await editArtifactService(params.id, body);
 
         return new Response(JSON.stringify({
             success: true,
             data: updated,
         }), { status: 200 });
-
     } catch (err) {
         return new Response(JSON.stringify({
             success: false,
@@ -96,6 +118,9 @@ export async function handleUpdateArtifact(req, { params }) {
     }
 }
 
+/**
+ * Delete artifact (DELETE /api/artifact/:id)
+ */
 export async function handleDeleteArtifact(req, { params }) {
     try {
         const deleted = await deleteArtifactService(params.id);
@@ -104,7 +129,6 @@ export async function handleDeleteArtifact(req, { params }) {
             success: true,
             data: deleted,
         }), { status: 200 });
-
     } catch (err) {
         return new Response(JSON.stringify({
             success: false,

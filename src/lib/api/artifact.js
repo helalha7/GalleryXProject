@@ -27,26 +27,24 @@ export async function fetchAllArtifacts(token) {
 
 // ✅ Get artifacts by gallery name (requires valid ticket)
 export async function fetchArtifactsByGallery(galleryName, token) {
-    const res = await fetch(
-        `${BASE_URL}/gallery?gallery=${encodeURIComponent(galleryName)}`,
-        {
-            method: 'GET',
-            headers: getAuthHeaders(token),
-        }
-    );
-
+    if (!galleryName) throw new Error('galleryName is required');
+    const url = `${BASE_URL}/gallery?gallery=${encodeURIComponent(galleryName.toUpperCase())}`;
+    const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(token),
+    });
     return await handleResponse(res);
 }
 
 // ✅ Increment views by artifact name (requires valid ticket)
 export async function incrementArtifactViewsByName(name, token) {
-    const res = await fetch(
-        `${BASE_URL}/views?name=${encodeURIComponent(name)}`,
-        {
-            method: 'PATCH',
-            headers: getAuthHeaders(token),
-        }
-    );
+    if (!name) throw new Error('artifact name is required');
+
+    const url = `${BASE_URL}/views?name=${encodeURIComponent(name)}`;
+    const res = await fetch(url, {
+        method: 'PATCH',
+        headers: getAuthHeaders(token),
+    });
 
     return await handleResponse(res);
 }

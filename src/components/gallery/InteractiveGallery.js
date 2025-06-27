@@ -46,18 +46,20 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
     }
   };
 
-  const calculatePosition = (coords, originalWidth = 1000, originalHeight = 600) => {
-    const { width, height } = dimensions;
-    const widthRatio = width / originalWidth;
-    const heightRatio = height / originalHeight;
+  const calculatePosition = (coords) => {
+    const x = parseFloat(coords.x ?? 0);
+    const y = parseFloat(coords.y ?? 0);
+    const width = parseFloat(coords.width ?? 5); // default small % box
+    const height = parseFloat(coords.height ?? 5);
 
     return {
-      left: `${coords.x * widthRatio}px`,
-      top: `${coords.y * heightRatio}px`,
-      width: `${coords.width * widthRatio}px`,
-      height: `${coords.height * heightRatio}px`,
+      left: `${x}%`,
+      top: `${y}%`,
+      width: `${width}%`,
+      height: `${height}%`,
     };
   };
+
 
   return (
     <div className="w-full">
@@ -79,7 +81,7 @@ export default function InteractiveGallery({ galleryImage, artifacts }) {
           <div
             key={artifact._id || index}
             className="absolute cursor-pointer transition-all duration-200 rounded-md border-2 border-transparent hover:border-white hover:bg-white/20 dark:hover:bg-white/10"
-            style={calculatePosition(artifact.coords)}
+            style={calculatePosition(artifact.coords || {})}
             onClick={() => handleArtifactClick(artifact)}
             title={artifact.name}
           >

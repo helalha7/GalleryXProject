@@ -48,8 +48,7 @@ export async function POST(req) {
         }), { status: status || 403 });
     }
 
-    const body = await req.json();
-    const reqWithUserAndBody = { ...req, user, body };
-
-    return await handleCreateArtifact(reqWithUserAndBody);
+    // ✅ Let the controller do req.json()
+    return await handleCreateArtifact(req);
 }
+

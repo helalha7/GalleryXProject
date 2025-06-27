@@ -21,13 +21,5 @@ export async function PATCH(req) {
         }), { status: 400 });
     }
 
-    // Inject user and query into req
-    const reqWithUserAndQuery = {
-        ...req,
-        user,
-        ticket,
-        query: { name },
-    };
-
-    return await handleIncrementArtifactViews(reqWithUserAndQuery);
+    return await handleIncrementArtifactViews({ user, ticket, query: { name } });
 }

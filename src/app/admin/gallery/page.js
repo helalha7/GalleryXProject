@@ -49,10 +49,10 @@ export default function AdminArtifactsPage() {
         setSubmitting(true);
         try {
             if (editingGalleryId) {
-                const updated = await updateGallery(editingGalleryId, { name: formData.name, description: formData.description, image: formData.image }, token);
+                const updated = await updateGallery(editingGalleryId, formData, token);
                 setGalleries((prev) => prev.map((g) => (g._id === editingGalleryId ? updated : g)));
             } else {
-                const created = await createGallery({ ...formData }, token);
+                const created = await createGallery(formData, token);
                 setGalleries((prev) => [...prev, created]);
             }
             setShowAddForm(false);
@@ -97,7 +97,12 @@ export default function AdminArtifactsPage() {
                             </button>
                             <button
                                 onClick={() => {
-                                    setFormData({ name: gallery.name, description: gallery.description, image: gallery.image });
+                                    setFormData({
+                                        name: gallery.name,
+                                        description: gallery.description,
+                                        image: gallery.image,
+                                        mapImage: gallery.mapImage || ""
+                                    });
                                     setEditingGalleryId(gallery._id);
                                     setShowAddForm(true);
                                 }}
@@ -131,14 +136,10 @@ export default function AdminArtifactsPage() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{editingGalleryId ? "Edit Gallery" : "Add New Gallery"}</h2>
-                            <button
-                                onClick={() => {
-                                    setShowAddForm(false);
-                                    resetForm();
-                                }}
-                                className="text-gray-500 dark:text-gray-300"
-                            >
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                                {editingGalleryId ? "Edit Gallery" : "Add New Gallery"}
+                            </h2>
+                            <button onClick={() => { setShowAddForm(false); resetForm(); }} className="text-gray-500 dark:text-gray-300">
                                 <X size={24} />
                             </button>
                         </div>
@@ -168,9 +169,13 @@ export default function AdminArtifactsPage() {
                                 />
                             </div>
                             <FileUploader label="Gallery Image" onUpload={(url) => setFormData((prev) => ({ ...prev, image: url }))} />
+                            <FileUploader label="Map Image (for drawing artifacts)" onUpload={(url) => setFormData((prev) => ({ ...prev, mapImage: url }))} />
+
                             <div className="flex justify-end space-x-3 pt-4">
                                 <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 border rounded text-gray-700 dark:text-white">Cancel</button>
-                                <button type="submit" disabled={submitting} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">{submitting ? "Saving..." : editingGalleryId ? "Update Gallery" : "Add Gallery"}</button>
+                                <button type="submit" disabled={submitting} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                    {submitting ? "Saving..." : editingGalleryId ? "Update Gallery" : "Add Gallery"}
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -182,18 +187,8 @@ export default function AdminArtifactsPage() {
                     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center">
                         <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Are you sure you want to delete this gallery?</h3>
                         <div className="flex justify-center gap-4">
-                            <button
-                                onClick={() => setConfirmDeleteId(null)}
-                                className="px-4 py-2 border rounded text-gray-700 dark:text-white"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleDeleteGallery}
-                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                            >
-                                Delete
-                            </button>
+                            <button onClick={() => setConfirmDeleteId(null)} className="px-4 py-2 border rounded text-gray-700 dark:text-white">Cancel</button>
+                            <button onClick={handleDeleteGallery} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
                         </div>
                     </div>
                 </div>

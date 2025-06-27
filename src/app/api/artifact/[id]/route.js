@@ -1,4 +1,3 @@
-
 import { handleUpdateArtifact, handleDeleteArtifact } from '@/core/controllers/artifactController';
 import { requireAdmin } from '@/lib/middleware/auth';
 
