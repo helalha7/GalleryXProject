@@ -9,7 +9,8 @@ export default function Sidebar() {
   const navItems = [
     { name: 'View Users', href: '/admin/users', icon: 'staff' },
     { name: 'View Graph', href: '/admin/views', icon: 'chart' },
-    { name: 'manage Galleries', href: '/admin/gallery', icon: 'artifact' }, // ✅ new item
+    { name: 'Manage Galleries', href: '/admin/gallery', icon: 'artifact' },
+    { name: 'Map Visibility', href: '/admin/map-visibility', icon: 'map' }, // ✅ new item
   ];
 
   const icons = {
@@ -35,6 +36,11 @@ export default function Sidebar() {
         <path strokeLinecap="round" strokeLinejoin="round" d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
       </svg>
     ),
+    map: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5-2V4l6 2 6-2 5 2v14l-6-2-6 2z" />
+      </svg>
+    ),
   };
 
   const handleLogout = () => {
@@ -57,8 +63,8 @@ export default function Sidebar() {
                 <Link
                   href={item.href}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${isActive
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-400 text-white shadow-md dark:from-blue-600 dark:to-cyan-400'
-                      : 'text-[#111827] hover:bg-gray-100 hover:text-gray-600 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:hover:text-white'
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-400 text-white shadow-md dark:from-blue-600 dark:to-cyan-400'
+                    : 'text-[#111827] hover:bg-gray-100 hover:text-gray-600 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:hover:text-white'
                     }`}
                 >
                   <span>{icons[item.icon]}</span>
