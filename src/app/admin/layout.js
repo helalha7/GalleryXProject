@@ -17,20 +17,20 @@ export default function AdminLayout({ children }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl">Loading...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+        <p className="text-xl animate-pulse">Loading Admin Panel...</p>
       </div>
     );
   }
 
   if (!isAdmin) {
-    return null; // While redirecting
+    return null; // while redirecting
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-900 text-white overflow-hidden">
       <Sidebar />
-      <div className="flex-1 overflow-auto bg-black dark:bg-gray-200">
+      <div className="flex-1 overflow-y-auto bg-gray-950 p-6 transition-all duration-300">
         {children}
       </div>
     </div>
