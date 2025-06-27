@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchAllGalleries, createGallery, deleteGallery } from "@/lib/api/gallery";
-import { Trash, X } from "lucide-react";
+import { fetchAllGalleries, createGallery, deleteGallery, updateGallery } from "@/lib/api/gallery";
+import { Trash, X, Pencil } from "lucide-react";
 import FileUploader from "@/components/admin/FileUploader";
 
 export default function AdminArtifactsPage() {
@@ -12,13 +12,10 @@ export default function AdminArtifactsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        image: "",
-        mapImage: "",
-    });
+    const [formData, setFormData] = useState({ name: "", description: "", image: "", mapImage: "" });
+    const [editingGalleryId, setEditingGalleryId] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
     const token = typeof window !== "undefined" ? sessionStorage.getItem("token") : null;
 
@@ -47,12 +44,17 @@ export default function AdminArtifactsPage() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleAddGallery = async (e) => {
+    const handleAddOrUpdateGallery = async (e) => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const created = await createGallery({ ...formData}, token);
-            setGalleries((prev) => [...prev, created]);
+            if (editingGalleryId) {
+                const updated = await updateGallery(editingGalleryId, { name: formData.name, description: formData.description, image: formData.image }, token);
+                setGalleries((prev) => prev.map((g) => (g._id === editingGalleryId ? updated : g)));
+            } else {
+                const created = await createGallery({ ...formData }, token);
+                setGalleries((prev) => [...prev, created]);
+            }
             setShowAddForm(false);
             resetForm();
         } catch (err) {
@@ -62,18 +64,21 @@ export default function AdminArtifactsPage() {
         }
     };
 
-    const handleDeleteGallery = async (galleryId) => {
-        if (!confirm("Are you sure you want to delete this gallery?")) return;
+    const handleDeleteGallery = async () => {
+        if (!confirmDeleteId) return;
         try {
-            await deleteGallery(galleryId, token);
-            setGalleries((prev) => prev.filter((g) => g._id !== galleryId));
+            await deleteGallery(confirmDeleteId, token);
+            setGalleries((prev) => prev.filter((g) => g._id !== confirmDeleteId));
         } catch (err) {
             setError(err.message);
+        } finally {
+            setConfirmDeleteId(null);
         }
     };
 
     const resetForm = () => {
-        setFormData({ name: "", description: "", image: "", mapImage: "", position: "" });
+        setFormData({ name: "", description: "", image: "", mapImage: "" });
+        setEditingGalleryId(null);
     };
 
     if (loading) return <p className="p-6 text-gray-500 dark:text-gray-300">Loading...</p>;
@@ -85,30 +90,26 @@ export default function AdminArtifactsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
                 {galleries.map((gallery) => (
-                    <div
-                        key={gallery._id}
-                        className="relative bg-white dark:bg-gray-800 shadow rounded-xl w-[320px] h-[460px] group overflow-hidden"
-                    >
-                        <div className="absolute top-3 right-3 z-10">
-                            <button
-                                onClick={() => handleDeleteGallery(gallery._id)}
-                                className="text-red-500 hover:text-red-700"
-                            >
+                    <div key={gallery._id} className="relative bg-white dark:bg-gray-800 shadow rounded-xl w-[320px] h-[460px] group overflow-hidden">
+                        <div className="absolute top-3 right-3 z-10 flex gap-2">
+                            <button onClick={() => setConfirmDeleteId(gallery._id)} className="text-red-500 hover:text-red-700">
                                 <Trash size={20} />
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setFormData({ name: gallery.name, description: gallery.description, image: gallery.image });
+                                    setEditingGalleryId(gallery._id);
+                                    setShowAddForm(true);
+                                }}
+                                className="text-blue-500 hover:text-blue-700"
+                            >
+                                <Pencil size={20} />
                             </button>
                         </div>
 
-                        <Link
-                            href={`/admin/artifact/${encodeURIComponent(gallery.name)}`}
-                            className="block w-full h-full text-left"
-                        >
+                        <Link href={`/admin/artifact/${encodeURIComponent(gallery.name)}`} className="block w-full h-full text-left">
                             <div className="relative w-full h-3/5">
-                                <Image
-                                    src={gallery.image}
-                                    alt={gallery.name}
-                                    fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                />
+                                <Image src={gallery.image} alt={gallery.name} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                             </div>
                             <div className="p-4 h-2/5">
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">{gallery.name}</h2>
@@ -126,12 +127,11 @@ export default function AdminArtifactsPage() {
                 </button>
             </div>
 
-            {/* Add Gallery Modal */}
             {showAddForm && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Add New Gallery</h2>
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{editingGalleryId ? "Edit Gallery" : "Add New Gallery"}</h2>
                             <button
                                 onClick={() => {
                                     setShowAddForm(false);
@@ -142,7 +142,7 @@ export default function AdminArtifactsPage() {
                                 <X size={24} />
                             </button>
                         </div>
-                        <form onSubmit={handleAddGallery} className="space-y-6">
+                        <form onSubmit={handleAddOrUpdateGallery} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gallery Name *</label>
                                 <input
@@ -167,15 +167,34 @@ export default function AdminArtifactsPage() {
                                     placeholder="Gallery description"
                                 />
                             </div>
-
                             <FileUploader label="Gallery Image" onUpload={(url) => setFormData((prev) => ({ ...prev, image: url }))} />
-                            <FileUploader label="Map Image" onUpload={(url) => setFormData((prev) => ({ ...prev, mapImage: url }))} />
-
                             <div className="flex justify-end space-x-3 pt-4">
                                 <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 border rounded text-gray-700 dark:text-white">Cancel</button>
-                                <button type="submit" disabled={submitting} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">{submitting ? "Adding..." : "Add Gallery"}</button>
+                                <button type="submit" disabled={submitting} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">{submitting ? "Saving..." : editingGalleryId ? "Update Gallery" : "Add Gallery"}</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {confirmDeleteId && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center">
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Are you sure you want to delete this gallery?</h3>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={() => setConfirmDeleteId(null)}
+                                className="px-4 py-2 border rounded text-gray-700 dark:text-white"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteGallery}
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
