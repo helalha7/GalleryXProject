@@ -66,7 +66,6 @@ export default function FixedMuseumMap({ onGallerySelect }) {
     };
   };
 
-
   const coordsMap = {
     'gallery 1': { x: 7, y: 12 },
     'gallery 2': { x: 7, y: 245 },
@@ -77,9 +76,8 @@ export default function FixedMuseumMap({ onGallerySelect }) {
     'bathroom': { x: 315, y: 15, w: 165, h: 60 },
     'cinema': { x: 420, y: 350, w: 370, h: 150 },
     'restaurant': { x: 485, y: 12, w: 690, h: 220 },
-    'help desk': { x: 615, y: 575, w: 100, h: 140 },
+    'helpdesk': { x: 615, y: 575, w: 100, h: 140 },
   };
-
 
   if (loading) return <LoadingSpinner message="Loading museum map..." />;
 
